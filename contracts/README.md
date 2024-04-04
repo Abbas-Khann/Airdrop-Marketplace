@@ -1,13 +1,7 @@
-# Sample Hardhat Project
+## Flow
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+-> User get the Wrapped Morph from WMorph contract by adding in Morph
+-> Staking contract takes in the staking Tokens
+-> Gives the user some Staked Tokens
+-> Now the Tokens in the Staking contract can be then used to offer liquidity in bridges , dexes or lending pools to make money
+-> At the end user can then withdraw the money from this Staking contract along with the rewards directly given to them
