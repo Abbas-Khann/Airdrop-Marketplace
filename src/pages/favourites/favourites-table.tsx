@@ -9,6 +9,9 @@ import {
 import milkyWay from "@/assets/dashboard/milkyway.svg";
 import network1 from "@/assets/dashboard/eth.svg";
 import network2 from "@/assets/dashboard/network2.svg";
+import { Star } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { Typography } from "@/components/ui/typography";
 
@@ -89,7 +92,49 @@ export default function FavouritesTable() {
           </TableRow>
         </TableHeader>
         <div className="my-2" />
-        <TableBody></TableBody>
+        <TableBody>
+          {mockData.map((data, idx) => (
+            <React.Fragment key={idx}>
+              <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
+                <TableCell className=" cursor-pointer rounded-l-xl">
+                  <Star />
+                </TableCell>
+                <TableCell className="font-medium">{idx + 1}</TableCell>
+                <TableCell>
+                  <Link
+                    href={`/airdrop/${data.protocol.name}`}
+                    className=" flex items-center gap-2"
+                  >
+                    <Image src={data.protocol.logo} alt={data.protocol.name} />
+                    <span className="block space-y-0">
+                      <Typography variant={"large"}>
+                        {data.protocol.name}
+                      </Typography>
+                      <Typography
+                        variant={"paragraph"}
+                        className=" max-w-[20ch] truncate"
+                      >
+                        {data.protocol.description}
+                      </Typography>
+                    </span>
+                  </Link>
+                </TableCell>
+                <TableCell>{data.difficulty}</TableCell>
+                <TableCell>{data.category}</TableCell>
+                <TableCell>{data.likelihood}</TableCell>
+                <TableCell>{data.quest}</TableCell>
+                <TableCell className="rounded-r-xl text-center">
+                  <span className="flex items-center">
+                    {data.networks.map((network, idx) => (
+                      <Image src={network} alt="network" key={idx} />
+                    ))}
+                  </span>
+                </TableCell>
+              </TableRow>
+              <div className="my-4" />
+            </React.Fragment>
+          ))}
+        </TableBody>
       </Table>
     </>
   );
