@@ -30,8 +30,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <RainbowKitProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="system"
-              enableSystem={true}
+              defaultTheme="dark"
+              // enableSystem={true}
             >
               <Component {...pageProps} />
             </ThemeProvider>
