@@ -21,7 +21,7 @@ export default function DashboardLayout({
         <div className="min-h-screen pt-6 md:pt-0">{children}</div>
       </DashboardContainer>
       <div className="">
-        <Footer />
+        <Footer isDashboard />
       </div>
     </>
   );
