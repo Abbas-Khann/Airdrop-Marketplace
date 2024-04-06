@@ -1,4 +1,4 @@
-import { getReferrerData, getUser } from "../get/userData";
+import { getUser } from "../get/userData";
 import { createUser } from "../create/newUser";
 
 type handleUserProps = {
