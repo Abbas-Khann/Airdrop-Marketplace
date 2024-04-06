@@ -2,14 +2,15 @@ import React from "react";
 import { Typography } from "../ui/typography";
 import { Card } from "../ui/card";
 import layerzero from "@/assets/dashboard/layerzero.svg";
+import hyperlane from "@/assets/dashboard/hyperlane.svg";
 import Image from "next/image";
 
 const data = [
-  // {
-  //   title: "Hyperlane",
-  //   difficulty: "Easy",
-  //   image: hyperlane,
-  // },
+  {
+    title: "Hyperlane",
+    difficulty: "Easy",
+    image: hyperlane,
+  },
   {
     title: "LayerZero",
     difficulty: "Medium",
