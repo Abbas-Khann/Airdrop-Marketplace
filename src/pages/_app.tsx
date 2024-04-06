@@ -7,10 +7,18 @@ import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { mainnet } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import {
+  GetSiweMessageOptions,
+  RainbowKitSiweNextAuthProvider,
+} from "@rainbow-me/rainbowkit-siwe-next-auth";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const getSiweMessageOptions: GetSiweMessageOptions = () => ({
+  statement: "Sign in",
 });
 
 const queryClient = new QueryClient();
@@ -27,15 +35,19 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     <main className={`font-sans ${inter.variable}`}>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              // enableSystem={true}
-            >
-              <Component {...pageProps} />
-            </ThemeProvider>
-          </RainbowKitProvider>
+          <RainbowKitSiweNextAuthProvider
+            getSiweMessageOptions={getSiweMessageOptions}
+          >
+            <RainbowKitProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                // enableSystem={true}
+              >
+                <Component {...pageProps} />
+              </ThemeProvider>
+            </RainbowKitProvider>
+          </RainbowKitSiweNextAuthProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </main>
