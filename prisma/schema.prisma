@@ -1,20 +1,171 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model User {
+  id              Int           @id @default(autoincrement())
+  ethereumAddress String        @unique
+  inviteCode      String        @unique
+  role            Role          @default(USER)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  discordHandle   String?       @unique
+  email           String?       @unique
+  githubHandle    String?       @unique
+  twitterHandle   String?       @unique
+  interactions    Interaction[]
+  UserProjects    UserProject[]
+  UserRewards     UserReward[]
+  UserTasks       UserTask[]
+}
 
-    @@index([name])
+model Interaction {
+  id           Int             @id @default(autoincrement())
+  type         InteractionType
+  contractType ContractType?
+  chainId      Int?
+  points       Int             @default(0)
+  userId       Int
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  user         User            @relation(fields: [userId], references: [id])
+}
+
+model Project {
+  id               Int            @id @default(autoincrement())
+  name             String
+  shortDescription String
+  about            String
+  moreDescription  String?
+  difficulty       DifficultyType
+  category         CategoryType
+  likelihood       LikelihoodType
+  rating           Float
+  featured         Boolean        @default(false)
+  network          String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  links            Link[]
+  tasks            Task[]
+  UserFavorites    UserProject[]
+}
+
+model Task {
+  id           Int            @id @default(autoincrement())
+  name         String
+  difficulty   DifficultyType
+  about        String
+  instructions String
+  projectId    Int
+  steps        Step[]
+  Project      Project        @relation(fields: [projectId], references: [id])
+  UserTasks    UserTask[]
+}
+
+model Step {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  taskId      Int
+  Task        Task   @relation(fields: [taskId], references: [id])
+}
+
+model Link {
+  id        Int      @id @default(autoincrement())
+  url       String
+  type      LinkType
+  projectId Int
+  Project   Project  @relation(fields: [projectId], references: [id])
+}
+
+model UserTask {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  taskId    Int
+  completed Boolean @default(false)
+  Task      Task    @relation(fields: [taskId], references: [id])
+  User      User    @relation(fields: [userId], references: [id])
+}
+
+model UserProject {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  projectId Int
+  Project   Project @relation(fields: [projectId], references: [id])
+  User      User    @relation(fields: [userId], references: [id])
+}
+
+model Reward {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  basePoints  Int
+  type        RewardType
+  day         Int?
+  isDeleted   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userRewards UserReward[]
+}
+
+model UserReward {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  rewardId  Int
+  claimedAt DateTime   @default(now())
+  type      RewardType
+  points    Int        @default(0)
+  reward    Reward     @relation(fields: [rewardId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+}
+
+enum RewardType {
+  DAILY
+}
+
+enum LinkType {
+  TWITTER
+  GITHUB
+  TELEGRAM
+  DISCORD
+}
+
+enum CategoryType {
+  L1
+  L2
+  DEFI
+  NFT
+  DAO
+  OTHER
+}
+
+enum ContractType {
+  NO_CONTRACT
+}
+
+enum InteractionType {
+  MINT
+  BRIDGE
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum DifficultyType {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum LikelihoodType {
+  LOW
+  MEDIUM
+  HIGH
 }
