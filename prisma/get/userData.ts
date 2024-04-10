@@ -5,6 +5,7 @@ interface getUserProps {
   includeInteractions?: boolean;
   includeRewards?: boolean;
 }
+
 export const getUser = async ({
   ethAddress,
   includeInteractions = false,
