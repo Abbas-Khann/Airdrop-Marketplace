@@ -6,7 +6,7 @@ import {
   LinkType,
 } from "@prisma/client";
 
-type NewProjectProps = {
+export type NewProjectProps = {
   name: string;
   shortDescription: string;
   about: string;
@@ -20,7 +20,7 @@ type NewProjectProps = {
   links?: { url: string; type: LinkType }[];
 };
 
-export default async function newProjec({
+export default async function newProject({
   name,
   shortDescription,
   about,

@@ -4,12 +4,16 @@ interface getUserProps {
   ethAddress: string;
   includeInteractions?: boolean;
   includeRewards?: boolean;
+  includeProjects?: boolean;
+  includeTasks?: boolean;
 }
 
 export const getUser = async ({
   ethAddress,
   includeInteractions = false,
   includeRewards = false,
+  includeProjects = false,
+  includeTasks = false,
 }: getUserProps) => {
   return await prisma.user.findUnique({
     where: { ethereumAddress: ethAddress },
@@ -37,6 +41,24 @@ export const getUser = async ({
               type: true,
               points: true,
               claimedAt: true,
+            },
+          }
+        : undefined,
+      UserProjects: includeProjects
+        ? {
+            select: {
+              id: true,
+              projectId: true,
+              favourite: true,
+            },
+          }
+        : undefined,
+      UserTasks: includeTasks
+        ? {
+            select: {
+              id: true,
+              taskId: true,
+              completed: true,
             },
           }
         : undefined,

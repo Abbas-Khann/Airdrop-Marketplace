@@ -14,6 +14,6 @@
 
 ## User project flow
 
-- Users can bookmark / favourite their project
+- Users can bookmark / favourite their project ✅
 
-- Users Complete the task for a certain projects
+- Users Complete the task for a certain projects ✅
