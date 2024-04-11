@@ -3,20 +3,68 @@ import React, { useState } from "react";
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { handleMorphTokenMint } from "@/utils/contracts/handleMinting";
+import { handleStaking } from "@/utils/contracts/handleStaking";
+import { handleUnstake } from "@/utils/contracts/handleStaking";
+import { useAccount } from "wagmi";
+import { useConfig } from "wagmi";
 
 export default function AirdropsSignup() {
   const [mintAmount, setMintAmount] = useState("");
   const [stakeAmount, setStakeAmount] = useState("");
+  const [userStakedAmount, setUserStakedAmount] = useState(0); // This should be fetched from the contract [TODO]
+  const [userMorphBalance, setUserMorphBalance] = useState(0); // This should be fetched from the contract [TODO]
+  const account = useAccount();
 
-  const handleMintButton = () => {
+  const handleMintButton = async () => {
     console.log("Mint button clicked");
     // Call the mint function here with mintAmount
+    if (mintAmount !== "" && account.address) {
+      const tx = await handleMorphTokenMint({
+        toAddress: account.address,
+        amount: Number(mintAmount),
+        config: useConfig(),
+      });
+
+      if (tx) {
+        console.log("Minted successfully");
+        setMintAmount("");
+        setUserMorphBalance(Number(mintAmount));
+      }
+    }
   };
 
-  const handleStakeButton = () => {
+  const handleStakeButton = async () => {
     console.log("Stake button clicked");
     // Call the stake function here with stakeAmount
+    if (stakeAmount !== "" && account.address) {
+      const tx = await handleStaking({
+        amount: Number(stakeAmount),
+        config: useConfig(),
+      });
+
+      if (tx) {
+        console.log("Staked successfully");
+        setStakeAmount("");
+        setUserStakedAmount(Number(stakeAmount));
+      }
+    }
   };
+
+  // TODO: Implement the handleUnstakeButton function
+  // When the user has balance we should render components to allow the user to unstake
+
+  const handleUnstakeButton = async () => {
+    console.log("Unstake button clicked");
+    // Call the unstake function here
+    if (stakeAmount !== "" && account.address) {
+      handleUnstake({
+        amount: Number(stakeAmount),
+        config: useConfig(),
+      });
+    }
+  };
+
   return (
     <>
       <div className=" space-y-6 py-6 md:space-y-12">
