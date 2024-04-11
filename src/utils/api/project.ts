@@ -36,7 +36,7 @@ export type ProjectDataType = {
       description: string;
     }[];
   }[];
-}[];
+};
 
 export async function getProject({
   id,
