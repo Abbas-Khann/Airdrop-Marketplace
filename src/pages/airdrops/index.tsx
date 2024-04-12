@@ -13,8 +13,8 @@ export default function AirdropHunterPage() {
   // If the user is not eligible, we will show AirdropsSignup
   return (
     <DashboardLayout>
-      {/* <AirdropsTable /> */}
-      <AirdropsSignup />
+      <AirdropsTable />
+      {/* <AirdropsSignup /> */}
     </DashboardLayout>
   );
 }

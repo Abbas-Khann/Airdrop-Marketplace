@@ -20,10 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@radix-ui/react-separator";
 
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@/components/ui/typography";
+import { getProjects } from "@/utils/api/getProjects";
+import { Project, Task } from "@prisma/client";
 
 const mockData = [
   {
@@ -174,7 +177,29 @@ const network = [
   },
 ];
 
+interface ProjectWithTask extends Project {
+  tasks: Task[];
+}
+
 export default function AirdropsTable() {
+  const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response && Array.isArray(response)) {
+          setProjectData(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+        setProjectData([]);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const filters = (
     <>
       <Select>
@@ -232,27 +257,24 @@ export default function AirdropsTable() {
 
   return (
     <>
-      <div className=" space-y-6 py-6 md:space-y-12">
+      <div className="space-y-6 py-6 md:space-y-12">
         <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
-          <Typography variant={"h2"} className=" font-raleway">
-            {mockData.length} Airdrops
+          <Typography variant={"h2"} className="font-raleway">
+            {projectData.length} Airdrops
           </Typography>
           <div className="relative">
             <Input
               type="text"
               placeholder="Search..."
-              className=" rounded-xl bg-[#E9E9E9] pl-10 pr-28 text-black dark:bg-white/30"
+              className="rounded-xl bg-[#E9E9E9] pl-10 pr-28 text-black dark:bg-white/30"
             />
             <Search className="absolute left-3 top-3 h-4 w-4" />
           </div>
         </div>
-        {/* <div className="flex md:w-full items-center flex-wrap md:flex-row justify-normal gap-4">
-          {filters}
-        </div> */}
       </div>
       <Table>
         <TableHeader>
-          <TableRow className="">
+          <TableRow>
             <TableHead></TableHead>
             <TableHead>#</TableHead>
             <TableHead>Name</TableHead>
@@ -263,47 +285,54 @@ export default function AirdropsTable() {
             <TableHead>Networks</TableHead>
           </TableRow>
         </TableHeader>
-        <div className="my-2" />
-        <TableBody className="">
-          {mockData.map((data, idx) => (
+        <TableBody>
+          {projectData.map((project, idx) => (
             <React.Fragment key={idx}>
               <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
-                <TableCell className=" cursor-pointer rounded-l-xl">
+                <TableCell className="cursor-pointer rounded-l-xl">
                   <Star />
                 </TableCell>
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell>
                   <Link
-                    href={`/airdrops/${data.protocol.name}`}
-                    className=" flex items-center gap-2"
+                    href={`/airdrops/${project.name}`}
+                    className="flex items-center gap-2"
                   >
-                    <Image src={data.protocol.logo} alt={data.protocol.name} />
+                    {/* TODO: how do we get the project logo?  */}
+                    {/* <Image src={"project.logo"} alt={project.name} /> */}
                     <span className="block space-y-0">
-                      <Typography variant={"large"}>
-                        {data.protocol.name}
-                      </Typography>
+                      <Typography variant={"large"}>{project.name}</Typography>
                       <Typography
                         variant={"paragraph"}
-                        className=" max-w-[20ch] truncate"
+                        className="max-w-[20ch] truncate"
                       >
-                        {data.protocol.description}
+                        {project.shortDescription}
                       </Typography>
                     </span>
                   </Link>
                 </TableCell>
-                <TableCell>{data.difficulty}</TableCell>
-                <TableCell>{data.category}</TableCell>
-                <TableCell>{data.likelihood}</TableCell>
-                <TableCell>{data.quest}</TableCell>
+                <TableCell>{project.difficulty}</TableCell>
+                <TableCell>{project.category}</TableCell>
+                <TableCell>{project.likelihood}</TableCell>
+                <TableCell>{project.tasks?.length}</TableCell>
                 <TableCell className="rounded-r-xl text-center">
                   <span className="flex items-center">
-                    {data.networks.map((network, idx) => (
-                      <Image src={network} alt="network" key={idx} />
-                    ))}
+                    {/* {wagmiConfig.chains.map((network, networkIdx) => (
+                      <Image
+                        src={network.logo}
+                        alt="network"
+                        key={networkIdx}
+                      />
+                    ))} */}
+                    {/* {data.networks.map((network, networkIdx) => (
+                      <Image src={network} alt="network" key={networkIdx} />
+                    ))} */}
                   </span>
                 </TableCell>
               </TableRow>
-              <div className="my-4" />
+              {idx < mockData.length - 1 && (
+                <tr className="spacer" style={{ height: "10px" }}></tr>
+              )}
             </React.Fragment>
           ))}
         </TableBody>

@@ -26,7 +26,7 @@ export default async function handler(
   try {
     const projects = await getAllProjects();
     console.log("Projects fetched");
-    res.status(200).json({ projects });
+    res.status(200).json(projects);
   } catch (error) {
     console.error("Error in /api/tasks:", error);
     res.status(500).json({
