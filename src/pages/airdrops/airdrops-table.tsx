@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@radix-ui/react-separator";
 
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
@@ -295,7 +294,7 @@ export default function AirdropsTable() {
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell>
                   <Link
-                    href={`/airdrops/${project.name}`}
+                    href={`/airdrops/${project.id}`}
                     className="flex items-center gap-2"
                   >
                     {/* TODO: how do we get the project logo?  */}

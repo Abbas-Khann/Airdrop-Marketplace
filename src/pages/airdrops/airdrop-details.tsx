@@ -12,10 +12,13 @@ import {
   Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import Link from "next/link";
-import QuestsDetails from "./quests-details";
+import { useEffect } from "react";
+import { getProject } from "@/utils/api/project";
+import { useState } from "react";
+import { ProjectDataType } from "@/utils/api/project";
 
 interface AboutProps {
   title: string;
@@ -63,6 +66,22 @@ const links = [
 
 export default function AirdropDetails() {
   const router = useRouter();
+  const [project, setProject] = useState<ProjectDataType | null>(null);
+
+  useEffect(() => {
+    console.log("getting airdrop details");
+    const airdropId = router.query.airdrop;
+
+    const fetchProject = async () => {
+      if (!airdropId) return;
+      // TODO: debug why this is not returning the project data
+      const projectData = await getProject({ id: Number(airdropId) });
+      if (project) setProject(projectData);
+    };
+
+    fetchProject();
+  }, []);
+
   return (
     <div className="space-y-14">
       <div className="space-y-8">
@@ -79,9 +98,9 @@ export default function AirdropDetails() {
           <div className="flex items-center gap-4">
             <Image src={milkyway} alt="protocol" />
             <div>
-              <Typography variant={"h2"}>MilkyWay</Typography>
+              <Typography variant={"h2"}>{project?.name}</Typography>
               <Typography variant={"muted"}>
-                Lorem ipsum dolor sit amet consectetur.
+                {project?.shortDescription}
               </Typography>
             </div>
           </div>
@@ -124,24 +143,12 @@ export default function AirdropDetails() {
       <div className="space-y-6">
         <div className="space-y-4">
           <Typography variant={"h4"}>About</Typography>
-          <Typography variant={"paragraph"}>
-            Magic Eden is one of the hottest projects on Solana right now, but
-            its facing competition from Tensor, a Blur-like NFT marketplace
-            thats rolled out its own points system ahead of a presumed airdrop.
-            In a bid to keep up with platforms across the Ethereum, Bitcoin, and
-            Solana NFT scenes, the project may eventually opt to release its own
-            native governance token.
-          </Typography>
+          <Typography variant={"paragraph"}>{project?.about}</Typography>
         </div>
         <div className=" space-y-4">
           <Typography variant={"h4"}>More</Typography>
           <Typography variant={"paragraph"}>
-            Magic Eden is one of the hottest projects on Solana right now, but
-            its facing competition from Tensor, a Blur-like NFT marketplace
-            thats rolled out its own points system ahead of a presumed airdrop.
-            In a bid to keep up with platforms across the Ethereum, Bitcoin, and
-            Solana NFT scenes, the project may eventually opt to release its own
-            native governance token.
+            {project?.moreDescription}
           </Typography>
         </div>
       </div>
