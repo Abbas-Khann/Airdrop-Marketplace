@@ -2,23 +2,14 @@
 import { Typography } from "@/components/ui/typography";
 import milkyway from "@/assets/dashboard/milkyway2.svg";
 import Image from "next/image";
-import {
-  BarChart,
-  ChevronLeft,
-  Crosshair,
-  LayoutGrid,
-  Link as LinkIcon,
-  LucideIcon,
-  Star,
-} from "lucide-react";
+import { ChevronLeft, Link as LinkIcon, LucideIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import Link from "next/link";
-import { useEffect } from "react";
-import { getProject } from "@/utils/api/project";
-import { useState } from "react";
 import { ProjectDataType } from "@/utils/api/project";
+import { getAboutProtocol } from "@/utils/get/aboutProtocol";
+import { getLinksProtocol } from "@/utils/get/linksProtocol";
 
 interface AboutProps {
   title: string;
@@ -26,61 +17,16 @@ interface AboutProps {
   icon: LucideIcon;
 }
 
-const aboutProtocol: AboutProps[] = [
-  {
-    title: "Difficulty",
-    value: "Easy",
-    icon: Crosshair,
-  },
-  {
-    title: "Category",
-    value: "Wallet",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Likelihood",
-    value: "High",
-    icon: BarChart,
-  },
-  {
-    title: "Rating",
-    value: "3.4",
-    icon: Star,
-  },
-];
+interface ProjectDataProps {
+  projectData: ProjectDataType;
+}
 
-const links = [
-  {
-    label: "Website",
-    href: "#",
-  },
-  {
-    label: "Discord",
-    href: "#",
-  },
-  {
-    label: "Twitter",
-    href: "#",
-  },
-];
-
-export default function AirdropDetails() {
+export default function AirdropDetails({ projectData }: ProjectDataProps) {
   const router = useRouter();
-  const [project, setProject] = useState<ProjectDataType | null>(null);
+  const aboutProtocol = getAboutProtocol(projectData);
+  const links = getLinksProtocol(projectData);
 
-  useEffect(() => {
-    console.log("getting airdrop details");
-    const airdropId = router.query.airdrop;
-
-    const fetchProject = async () => {
-      if (!airdropId) return;
-      // TODO: debug why this is not returning the project data
-      const projectData = await getProject({ id: Number(airdropId) });
-      if (project) setProject(projectData);
-    };
-
-    fetchProject();
-  }, []);
+  console.log(links.length);
 
   return (
     <div className="space-y-14">
@@ -98,9 +44,9 @@ export default function AirdropDetails() {
           <div className="flex items-center gap-4">
             <Image src={milkyway} alt="protocol" />
             <div>
-              <Typography variant={"h2"}>{project?.name}</Typography>
+              <Typography variant={"h2"}>{projectData?.name}</Typography>
               <Typography variant={"muted"}>
-                {project?.shortDescription}
+                {projectData?.shortDescription}
               </Typography>
             </div>
           </div>
@@ -130,8 +76,18 @@ export default function AirdropDetails() {
               <Typography variant={"h3"}>Links</Typography>
             </div>
             <div className=" flex items-center gap-6 px-7">
+              {links.length === 0 && (
+                <Typography variant={"paragraph"}>
+                  No links available
+                </Typography>
+              )}
               {links.map(({ label, href }, idx) => (
-                <Link key={idx} href={href} className="text-lg underline">
+                <Link
+                  key={idx}
+                  href={href}
+                  target="_blank"
+                  className="text-lg underline"
+                >
                   {label}
                 </Link>
               ))}
@@ -143,12 +99,12 @@ export default function AirdropDetails() {
       <div className="space-y-6">
         <div className="space-y-4">
           <Typography variant={"h4"}>About</Typography>
-          <Typography variant={"paragraph"}>{project?.about}</Typography>
+          <Typography variant={"paragraph"}>{projectData?.about}</Typography>
         </div>
         <div className=" space-y-4">
           <Typography variant={"h4"}>More</Typography>
           <Typography variant={"paragraph"}>
-            {project?.moreDescription}
+            {projectData?.moreDescription}
           </Typography>
         </div>
       </div>
