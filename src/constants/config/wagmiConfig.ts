@@ -1,8 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { darkTheme, getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { getSupportedChains } from "./chainsConfig";
-
-const customChains = getSupportedChains();
+import { activeChains } from "./chainsConfig";
 
 export const theme = darkTheme({
   accentColor: "#FF8F8F",
@@ -15,6 +13,6 @@ export const theme = darkTheme({
 export const wagmiConfig = getDefaultConfig({
   appName: process.env.NEXT_PUBLIC_WALLETCONNECT_APP_NAME || "",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
-  chains: customChains as any,
+  chains: activeChains as any,
   ssr: true,
 });

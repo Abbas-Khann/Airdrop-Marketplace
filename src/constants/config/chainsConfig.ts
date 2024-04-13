@@ -1,4 +1,4 @@
-import { sepolia, arbitrum } from "wagmi/chains";
+import { sepolia, arbitrum, morphSepolia } from "wagmi/chains";
 
 export type RpcUrls = {
   http: readonly string[];
@@ -29,13 +29,17 @@ export interface Network {
 export const mainnetChains: Network[] = [
   {
     ...arbitrum,
-    iconUrl: "/chain-icons/arbitrum.svg",
+    iconUrl: "/chain-icons/arbitrum.png",
   },
 ];
 export const testnetChains: Network[] = [
   {
+    ...morphSepolia,
+    iconUrl: "/chain-icons/morph.jpg",
+  },
+  {
     ...sepolia,
-    iconUrl: "/chain-icons/eth-logo.svg",
+    iconUrl: "/chain-icons/sepolia.svg",
   },
 ];
 
@@ -43,13 +47,9 @@ export const getSupportedChains = () => {
   const env = process.env.NEXT_PUBLIC_ENVIRONMENT;
   switch (env) {
     case "mainnet":
-      return mainnetChains.map((chain) => ({
-        ...chain,
-      }));
+      return mainnetChains;
     case "testnet":
-      return testnetChains.map((chain) => ({
-        ...chain,
-      }));
+      return testnetChains;
     default:
       console.error(`Unsupported ENVIRONMENT value: ${env}`);
       return [];
