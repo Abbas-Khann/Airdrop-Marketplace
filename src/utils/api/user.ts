@@ -15,8 +15,8 @@ export async function favouriteProject(data: FavouriteProjectType) {
   let error;
 
   try {
-    response = await fetch("api/user/project", {
-      method: "GET",
+    response = await fetch("/api/user/project", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -37,8 +37,8 @@ export async function completeTask(data: CompleteTaskType) {
   let error;
 
   try {
-    response = await fetch("api/user/task", {
-      method: "GET",
+    response = await fetch("/api/user/task", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

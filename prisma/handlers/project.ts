@@ -96,7 +96,7 @@ export async function createStepsForTask(stepData: CreateStepType) {
 
 // NOTE: Handler for getting a project detailed info
 export default async function getProject({ id, name }: getProjectProps) {
-  if (id) {
+  if (id != undefined) {
     const projectData = await getProjectByID({
       projectId: id,
       includeDetailedInfo: true,

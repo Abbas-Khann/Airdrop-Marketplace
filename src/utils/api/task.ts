@@ -20,8 +20,8 @@ export async function createTasks(taskData: CreateTaskType) {
   let error;
 
   try {
-    response = await fetch("api/task", {
-      method: "GET",
+    response = await fetch("/api/task", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,8 +42,8 @@ export async function createSteps(stepData: CreateStepType) {
   let error;
 
   try {
-    response = await fetch("api/step", {
-      method: "GET",
+    response = await fetch("/api/step", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

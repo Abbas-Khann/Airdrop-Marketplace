@@ -45,11 +45,11 @@ export default async function handler(
     const projectId = req.query.id as string;
     const projectName = req.query.name as string;
 
-    if (!projectId || !projectName) {
-      res.status(400).send({
-        error: "Missing Project ID or Name",
-      });
-    }
+    // if (projectId == undefined || projectName == undefined) {
+    //   res.status(400).send({
+    //     error: "Missing Project ID or Name",
+    //   });
+    // }
 
     const projectData = await getProject({
       id: Number(projectId),

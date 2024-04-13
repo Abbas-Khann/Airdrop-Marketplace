@@ -49,9 +49,9 @@ export async function getProject({
   let error;
   let url;
   if (id) {
-    url = `api/project?id=${id}`;
+    url = `/api/project?id=${id}`;
   } else if (name) {
-    url = `api/project?name=${name}`;
+    url = `/api/project?name=${name}`;
   } else {
     return;
   }
@@ -91,8 +91,8 @@ export async function createProject(projectData: CreateProjectType) {
   let error;
 
   try {
-    response = await fetch("api/project", {
-      method: "GET",
+    response = await fetch("/api/project", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
