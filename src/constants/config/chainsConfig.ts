@@ -29,7 +29,7 @@ export interface Network {
 export const mainnetChains: Network[] = [
   {
     ...arbitrum,
-    iconUrl: "/chain-icons/arbitrum.png",
+    iconUrl: "/chain-icons/arbitrum.svg",
   },
 ];
 export const testnetChains: Network[] = [
