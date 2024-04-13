@@ -34,7 +34,16 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
               {task.about ||
                 "Detailed information about this task will be provided soon."}
             </Typography>
-
+            <Typography variant={"large"} className="text-zinc-900">
+              Requirements
+            </Typography>
+            <Typography variant={"paragraph"} className="text-zinc-900">
+              {task.instructions ||
+                "Instructions for this task will be provided soon."}
+            </Typography>
+            <Typography variant={"large"} className="text-zinc-900">
+              Steps to do
+            </Typography>
             {task.steps && task.steps.length > 0 ? (
               task.steps.map((step, idx) => (
                 <React.Fragment key={idx}>
@@ -42,7 +51,7 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
                     <li>{step.name || "Step description coming soon."}</li>
                   </Typography>
                   <Typography variant={"muted"}>
-                    Suscipit ultricies lacus tristique a feugiat nunc.
+                    {step.description || "No description available."}
                   </Typography>
                 </React.Fragment>
               ))
