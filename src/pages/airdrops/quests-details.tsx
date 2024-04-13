@@ -10,140 +10,59 @@ import Image from "next/image";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
+import { ProjectDataType } from "@/utils/api/project";
 
-const quests = [
-  {
-    title: "Stake to Secure Celetia",
-    description: "304 people completed",
-    value: "Easy",
-    details: (
-      <div>
-        <div className="space-y-3">
-          <Typography variant={"large"} className="text-zinc-900">
-            About
-          </Typography>
-          <Typography variant={"paragraph"} className="text-zinc-900">
-            Eclipse will source its data availability from Celestia, making it
-            probable that the network will want to say to TIA stakers by
-            airdropping them tokens!
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>1. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>2. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>3. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.{" "}
-          </Typography>
-        </div>
+interface ProjectDataProps {
+  projectData: ProjectDataType;
+}
 
-        <div className="mt-4 flex w-full items-center justify-center">
-          <Button size={"lg"} variant={"accent"}>
-            Mark as completed
-          </Button>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Stake to Secure Celetia",
-    description: "304 people completed",
-    value: "Easy",
-    details: (
-      <div>
-        <div className="space-y-3">
-          <Typography variant={"large"} className="text-zinc-900">
-            About
-          </Typography>
-          <Typography variant={"paragraph"} className="text-zinc-900">
-            Eclipse will source its data availability from Celestia, making it
-            probable that the network will want to say to TIA stakers by
-            airdropping them tokens!
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>1. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>2. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>3. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.{" "}
-          </Typography>
-        </div>
+export default function QuestsDetails({ projectData }: ProjectDataProps) {
+  const { tasks } = projectData;
 
-        <div className="mt-4 flex w-full items-center justify-center">
-          <Button size={"lg"} variant={"accent"}>
-            Mark as completed
-          </Button>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Stake to Secure Celetia",
-    description: "304 people completed",
-    value: "Easy",
-    details: (
-      <div>
-        <div className="space-y-3">
-          <Typography variant={"large"} className="text-zinc-900">
-            About
-          </Typography>
-          <Typography variant={"paragraph"} className="text-zinc-900">
-            Eclipse will source its data availability from Celestia, making it
-            probable that the network will want to say to TIA stakers by
-            airdropping them tokens!
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>1. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>2. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.
-          </Typography>
-          <Typography variant={"list"} className="text-zinc-900">
-            <li>3. Lorem ipsum dolor sit amet consectetur. </li>
-          </Typography>
-          <Typography variant={"muted"}>
-            Suscipit ultricies lacus tristique a feugiat nunc.{" "}
-          </Typography>
-        </div>
+  const taskData = tasks?.map((task) => {
+    return {
+      title: task.name,
+      description: "304 people completed", // TODO: Replace with actual data
+      value: task.difficulty || "Not Specified",
+      details: (
+        <div>
+          <div className="space-y-3">
+            <Typography variant={"large"} className="text-zinc-900">
+              About
+            </Typography>
+            <Typography variant={"paragraph"} className="text-zinc-900">
+              {task.about ||
+                "Detailed information about this task will be provided soon."}
+            </Typography>
 
-        <div className="mt-4 flex w-full items-center justify-center">
-          <Button size={"lg"} variant={"accent"}>
-            Mark as completed
-          </Button>
-        </div>
-      </div>
-    ),
-  },
-];
+            {task.steps && task.steps.length > 0 ? (
+              task.steps.map((step, idx) => (
+                <React.Fragment key={idx}>
+                  <Typography variant={"list"} className="text-zinc-900">
+                    <li>{step.name || "Step description coming soon."}</li>
+                  </Typography>
+                  <Typography variant={"muted"}>
+                    Suscipit ultricies lacus tristique a feugiat nunc.
+                  </Typography>
+                </React.Fragment>
+              ))
+            ) : (
+              <Typography variant={"paragraph"} className="text-zinc-900">
+                Steps for this task will be added soon.
+              </Typography>
+            )}
+          </div>
 
-export default function QuestsDetails() {
+          <div className="mt-4 flex w-full items-center justify-center">
+            <Button size={"lg"} variant={"accent"}>
+              Mark as completed
+            </Button>
+          </div>
+        </div>
+      ),
+    };
+  });
+
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -154,7 +73,7 @@ export default function QuestsDetails() {
         </DashboardCard>
       </div>
 
-      {quests.map(({ title, description, value, details }, idx) => (
+      {taskData?.map(({ title, description, value, details }, idx) => (
         <Accordion key={idx} type="single" collapsible className=" md:max-w-md">
           <AccordionItem value="title">
             <AccordionTrigger

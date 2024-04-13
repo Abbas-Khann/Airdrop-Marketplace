@@ -26,8 +26,6 @@ export default function AirdropDetails({ projectData }: ProjectDataProps) {
   const aboutProtocol = getAboutProtocol(projectData);
   const links = getLinksProtocol(projectData);
 
-  console.log(links.length);
-
   return (
     <div className="space-y-14">
       <div className="space-y-8">

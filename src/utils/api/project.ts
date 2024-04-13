@@ -24,7 +24,7 @@ export type ProjectDataType = {
     url: string;
     type: LinkType;
   }[];
-  task?: {
+  tasks?: {
     id: number;
     name: string;
     difficulty: DifficultyType;

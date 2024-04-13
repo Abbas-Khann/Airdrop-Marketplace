@@ -43,7 +43,7 @@ function AirdropPage() {
       <div className="mx-auto md:max-w-7xl">
         <div className="airdrop-layout py-6">
           <AirdropDetails projectData={projectData as ProjectDataType} />
-          {/* <QuestsDetails params={projectData.tasks} /> */}
+          <QuestsDetails projectData={projectData as ProjectDataType} />
         </div>
       </div>
     </DashboardLayout>
