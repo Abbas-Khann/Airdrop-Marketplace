@@ -53,3 +53,29 @@ export async function completeTask(data: CompleteTaskType) {
     return error;
   }
 }
+
+export async function getUser({ address }: { address: string }) {
+  try {
+    const response = await fetch(
+      `/api/user/getData?ethereumAddress=${address}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+    const data = await response.json();
+
+    return {
+      user: data.user,
+      response,
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
