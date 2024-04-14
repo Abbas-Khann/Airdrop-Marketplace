@@ -47,7 +47,7 @@ model Project {
   likelihood       LikelihoodType
   rating           Float
   featured         Boolean        @default(false)
-  network          String
+  networks         Int[] 
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   links            Link[]
@@ -134,6 +134,7 @@ enum LinkType {
   GITHUB
   TELEGRAM
   DISCORD
+  WEBSITE
 }
 
 enum CategoryType {

@@ -23,7 +23,7 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
   const taskData = tasks?.map((task) => {
     return {
       title: task.name,
-      description: "304 people completed", // TODO: Replace with actual data
+      description: `${task.UserTasks?.length} people completed`,
       value: task.difficulty || "Not Specified",
       details: (
         <div>
