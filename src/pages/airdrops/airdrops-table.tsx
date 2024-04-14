@@ -20,106 +20,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Loader from "@/components/ui/loader";
 
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
 import { Typography } from "@/components/ui/typography";
 import { getProjects } from "@/utils/api/getProjects";
 import { Project, Task } from "@prisma/client";
+import arbitrumLogo from "public/chain-icons/arbitrum.svg";
+import { activeChains } from "@/constants/config/chainsConfig";
 
-const mockData = [
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-];
+// TODO: add supported chains to db schema for the project details
 
 const difficulty = [
   {
@@ -256,86 +167,94 @@ export default function AirdropsTable() {
 
   return (
     <>
-      <div className="space-y-6 py-6 md:space-y-12">
-        <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
-          <Typography variant={"h2"} className="font-raleway">
-            {projectData.length} Airdrops
-          </Typography>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="rounded-xl bg-[#E9E9E9] pl-10 pr-28 text-black dark:bg-white/30"
-            />
-            <Search className="absolute left-3 top-3 h-4 w-4" />
+      {projectData.length > 0 ? (
+        <>
+          <div className="space-y-6 py-6 md:space-y-12">
+            <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
+              <Typography variant={"h2"} className="font-raleway">
+                {projectData.length} Airdrops
+              </Typography>
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  className="rounded-xl bg-[#E9E9E9] pl-10 pr-28 text-black dark:bg-white/30"
+                />
+                <Search className="absolute left-3 top-3 h-4 w-4" />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead></TableHead>
-            <TableHead>#</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Difficulty</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Likelihood</TableHead>
-            <TableHead>Quest</TableHead>
-            <TableHead>Networks</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {projectData.map((project, idx) => (
-            <React.Fragment key={idx}>
-              <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
-                <TableCell className="cursor-pointer rounded-l-xl">
-                  <Star />
-                </TableCell>
-                <TableCell className="font-medium">{idx + 1}</TableCell>
-                <TableCell>
-                  <Link
-                    href={`/airdrops/${project.id}`}
-                    className="flex items-center gap-2"
-                  >
-                    {/* TODO: how do we get the project logo?  */}
-                    {/* <Image src={"project.logo"} alt={project.name} /> */}
-                    <span className="block space-y-0">
-                      <Typography variant={"large"}>{project.name}</Typography>
-                      <Typography
-                        variant={"paragraph"}
-                        className="max-w-[20ch] truncate"
-                      >
-                        {project.shortDescription}
-                      </Typography>
-                    </span>
-                  </Link>
-                </TableCell>
-                <TableCell>{project.difficulty}</TableCell>
-                <TableCell>{project.category}</TableCell>
-                <TableCell>{project.likelihood}</TableCell>
-                <TableCell>{project.tasks?.length}</TableCell>
-                <TableCell className="rounded-r-xl text-center">
-                  <span className="flex items-center">
-                    {/* {wagmiConfig.chains.map((network, networkIdx) => (
-                      <Image
-                        src={network.logo}
-                        alt="network"
-                        key={networkIdx}
-                      />
-                    ))} */}
-                    {/* {data.networks.map((network, networkIdx) => (
-                      <Image src={network} alt="network" key={networkIdx} />
-                    ))} */}
-                  </span>
-                </TableCell>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Difficulty</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Likelihood</TableHead>
+                <TableHead>Quest</TableHead>
+                <TableHead>Networks</TableHead>
               </TableRow>
-              {idx < mockData.length - 1 && (
-                <tr className="spacer" style={{ height: "10px" }}></tr>
-              )}
-            </React.Fragment>
-          ))}
-        </TableBody>
-      </Table>
+            </TableHeader>
+            <TableBody>
+              {projectData.map((project, idx) => (
+                <React.Fragment key={idx}>
+                  <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
+                    <TableCell className="cursor-pointer rounded-l-xl">
+                      <Star />
+                    </TableCell>
+                    <TableCell className="font-medium">{idx + 1}</TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/airdrops/${project.id}`}
+                        className="flex items-center gap-2"
+                      >
+                        {/* TODO: how do we get the project logo?  */}
+                        <Image src={arbitrumLogo} alt={project.name} />
+                        <span className="block space-y-0">
+                          <Typography variant={"large"}>
+                            {project.name}
+                          </Typography>
+                          <Typography
+                            variant={"paragraph"}
+                            className="max-w-[20ch] truncate"
+                          >
+                            {project.shortDescription}
+                          </Typography>
+                        </span>
+                      </Link>
+                    </TableCell>
+                    <TableCell>{project.difficulty}</TableCell>
+                    <TableCell>{project.category}</TableCell>
+                    <TableCell>{project.likelihood}</TableCell>
+                    <TableCell>{project.tasks?.length}</TableCell>
+                    <TableCell className="rounded-r-xl text-center">
+                      <span className="flex items-center">
+                        {activeChains.map((network, networkIdx) => (
+                          <Image
+                            src={network.iconUrl || ""}
+                            alt="network"
+                            key={networkIdx}
+                            width={20}
+                            height={20}
+                            className="rounded-full"
+                          />
+                        ))}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                  {idx < projectData.length - 1 && (
+                    <tr className="spacer" style={{ height: "10px" }}></tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </TableBody>
+          </Table>
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 }

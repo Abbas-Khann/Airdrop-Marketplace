@@ -2,23 +2,15 @@
 import { Typography } from "@/components/ui/typography";
 import milkyway from "@/assets/dashboard/milkyway2.svg";
 import Image from "next/image";
-import {
-  BarChart,
-  ChevronLeft,
-  Crosshair,
-  LayoutGrid,
-  Link as LinkIcon,
-  LucideIcon,
-  Star,
-} from "lucide-react";
+import { ChevronLeft, Link as LinkIcon, LucideIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import Link from "next/link";
-import { useEffect } from "react";
-import { getProject } from "@/utils/api/project";
-import { useState } from "react";
 import { ProjectDataType } from "@/utils/api/project";
+import { getAboutProtocol } from "@/utils/get/aboutProtocol";
+import { getLinksProtocol } from "@/utils/get/linksProtocol";
+import Loader from "@/components/ui/loader";
 
 interface AboutProps {
   title: string;
@@ -26,132 +18,103 @@ interface AboutProps {
   icon: LucideIcon;
 }
 
-const aboutProtocol: AboutProps[] = [
-  {
-    title: "Difficulty",
-    value: "Easy",
-    icon: Crosshair,
-  },
-  {
-    title: "Category",
-    value: "Wallet",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Likelihood",
-    value: "High",
-    icon: BarChart,
-  },
-  {
-    title: "Rating",
-    value: "3.4",
-    icon: Star,
-  },
-];
+interface ProjectDataProps {
+  projectData: ProjectDataType;
+}
 
-const links = [
-  {
-    label: "Website",
-    href: "#",
-  },
-  {
-    label: "Discord",
-    href: "#",
-  },
-  {
-    label: "Twitter",
-    href: "#",
-  },
-];
-
-export default function AirdropDetails() {
+export default function AirdropDetails({ projectData }: ProjectDataProps) {
   const router = useRouter();
-  const [project, setProject] = useState<ProjectDataType | null>(null);
-
-  useEffect(() => {
-    console.log("getting airdrop details");
-    const airdropId = router.query.airdrop;
-
-    const fetchProject = async () => {
-      if (!airdropId) return;
-      // TODO: debug why this is not returning the project data
-      const projectData = await getProject({ id: Number(airdropId) });
-      if (project) setProject(projectData);
-    };
-
-    fetchProject();
-  }, []);
+  const aboutProtocol = getAboutProtocol(projectData);
+  const links = getLinksProtocol(projectData);
 
   return (
-    <div className="space-y-14">
-      <div className="space-y-8">
-        <Button
-          onClick={() => router.replace("/airdrops")}
-          variant={"secondary"}
-          className="flex items-center gap-1 rounded-xl"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <div>Back</div>
-        </Button>
+    <>
+      {Object.keys(projectData).length !== 0 ? (
+        <div className="space-y-14">
+          <div className="space-y-8">
+            <Button
+              onClick={() => router.replace("/airdrops")}
+              variant={"secondary"}
+              className="flex items-center gap-1 rounded-xl"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <div>Back</div>
+            </Button>
 
-        <div className="flex w-full items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Image src={milkyway} alt="protocol" />
-            <div>
-              <Typography variant={"h2"}>{project?.name}</Typography>
-              <Typography variant={"muted"}>
-                {project?.shortDescription}
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Image src={milkyway} alt="protocol" />
+                <div>
+                  <Typography variant={"h2"}>{projectData?.name}</Typography>
+                  <Typography variant={"muted"}>
+                    {projectData?.shortDescription}
+                  </Typography>
+                </div>
+              </div>
+              <div className="cursor-pointer">
+                <Star className="h-5 w-5" />
+              </div>
+            </div>
+
+            <DashboardCard className="space-y-8">
+              <div className="flex w-full flex-wrap items-center justify-between gap-4">
+                {aboutProtocol.map(({ title, value, icon: Icon }, idx) => (
+                  <div key={idx} className="flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-5 w-5" />
+                      <Typography variant={"h4"}>{title}</Typography>
+                    </div>
+                    <Typography variant={"smallTitle"} className="">
+                      {value}
+                    </Typography>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex w-full flex-col items-start gap-2">
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-5 w-5" />
+                  <Typography variant={"h3"}>Links</Typography>
+                </div>
+                <div className=" flex items-center gap-6 px-7">
+                  {links.length === 0 && (
+                    <Typography variant={"paragraph"}>
+                      No links available
+                    </Typography>
+                  )}
+                  {links.map(({ label, href }, idx) => (
+                    <Link
+                      key={idx}
+                      href={href}
+                      target="_blank"
+                      className="text-lg underline"
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </DashboardCard>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Typography variant={"h4"}>About</Typography>
+              <Typography variant={"paragraph"}>
+                {projectData?.about}
+              </Typography>
+            </div>
+            <div className=" space-y-4">
+              <Typography variant={"h4"}>More</Typography>
+              <Typography variant={"paragraph"}>
+                {projectData?.moreDescription}
               </Typography>
             </div>
           </div>
-          <div className="cursor-pointer">
-            <Star className="h-5 w-5" />
-          </div>
         </div>
-
-        <DashboardCard className="space-y-8">
-          <div className="flex w-full flex-wrap items-center justify-between gap-4">
-            {aboutProtocol.map(({ title, value, icon: Icon }, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <Icon className="h-5 w-5" />
-                  <Typography variant={"h4"}>{title}</Typography>
-                </div>
-                <Typography variant={"smallTitle"} className="">
-                  {value}
-                </Typography>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex w-full flex-col items-start gap-2">
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-5 w-5" />
-              <Typography variant={"h3"}>Links</Typography>
-            </div>
-            <div className=" flex items-center gap-6 px-7">
-              {links.map(({ label, href }, idx) => (
-                <Link key={idx} href={href} className="text-lg underline">
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </DashboardCard>
-      </div>
-
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <Typography variant={"h4"}>About</Typography>
-          <Typography variant={"paragraph"}>{project?.about}</Typography>
-        </div>
-        <div className=" space-y-4">
-          <Typography variant={"h4"}>More</Typography>
-          <Typography variant={"paragraph"}>
-            {project?.moreDescription}
-          </Typography>
-        </div>
-      </div>
-    </div>
+      ) : (
+        <Loader />
+      )}
+    </>
   );
 }

@@ -1,32 +1,37 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AirdropDetails from "./airdrop-details";
 import QuestsDetails from "./quests-details";
 import DashboardLayout from "@/components/dashboard/layout";
 import dynamic from "next/dynamic";
 import { getProject } from "@/utils/api/project";
 import { useRouter } from "next/router";
+import { ProjectDataType } from "@/utils/api/project";
+
+interface ProjectDataProps {
+  projectData: ProjectDataType;
+}
 
 function AirdropPage() {
   const router = useRouter();
+  const [projectData, setProjectData] = useState<ProjectDataProps | {}>({});
 
   useEffect(() => {
     const params = router.query;
     const fetchProject = async (id: number) => {
       try {
         const response = await getProject({ id: id });
-        console.log(response);
         if (response) {
-          // setProjectData(response);
+          // @ts-ignore
+          // TODO: Fix this type error
+          setProjectData(response.projectData);
         }
       } catch (error) {
         console.log(error);
         console.error("Failed to fetch projects:", error);
-        // setProjectData([]);
+        setProjectData([]);
       }
     };
-
-    console.log(params);
 
     if (params != undefined && params.airdropId != undefined) {
       fetchProject(Number(params.airdropId));
@@ -37,8 +42,8 @@ function AirdropPage() {
     <DashboardLayout>
       <div className="mx-auto md:max-w-7xl">
         <div className="airdrop-layout py-6">
-          <AirdropDetails />
-          <QuestsDetails />
+          <AirdropDetails projectData={projectData as ProjectDataType} />
+          <QuestsDetails projectData={projectData as ProjectDataType} />
         </div>
       </div>
     </DashboardLayout>

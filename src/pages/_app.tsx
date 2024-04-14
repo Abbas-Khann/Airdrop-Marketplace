@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiProvider } from "wagmi";
-import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { mainnet } from "wagmi/chains";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import {
@@ -14,6 +13,7 @@ import {
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import type { Session } from "next-auth";
+import { wagmiConfig, theme } from "@/constants/config/wagmiConfig";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,13 +26,6 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
 
 const queryClient = new QueryClient();
 
-const wagmiConfig = getDefaultConfig({
-  appName: process.env.NEXT_PUBLIC_WALLETCONNECT_APP_NAME || "",
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
-  chains: [mainnet],
-  ssr: true,
-});
-
 function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
   return (
     <main className={`font-sans ${inter.variable}`}>
@@ -42,7 +35,7 @@ function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
             <RainbowKitSiweNextAuthProvider
               getSiweMessageOptions={getSiweMessageOptions}
             >
-              <RainbowKitProvider>
+              <RainbowKitProvider theme={theme}>
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="dark"
