@@ -12,6 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { ProjectDataType } from "@/utils/api/project";
 import Loader from "@/components/ui/loader";
+import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { getUser, completeTask } from "@/utils/api/user";
+import { useState } from "react";
 
 interface ProjectDataProps {
   projectData: ProjectDataType;
@@ -19,11 +23,48 @@ interface ProjectDataProps {
 
 export default function QuestsDetails({ projectData }: ProjectDataProps) {
   const { tasks } = projectData;
+  const account = useAccount();
+  const { openConnectModal } = useConnectModal();
+
+  const [taskStatus, setTaskStatus] = useState(
+    tasks?.map((task) => ({ id: task.id, completed: false })),
+  );
+
+  const handleCompleteTaskButton = async ({ taskId }: { taskId: number }) => {
+    if (!account.isConnected && openConnectModal) {
+      return openConnectModal();
+    }
+
+    if (account.address) {
+      const response = await getUser({ address: account.address });
+      const user = response?.user;
+
+      if (user) {
+        const completionResponse = (await completeTask({
+          userId: user.id,
+          taskId: taskId,
+        })) as Response;
+        if (completionResponse.ok) {
+          setTaskStatus((prevStatus) =>
+            (prevStatus ?? []).map((status) =>
+              status.id === taskId ? { ...status, completed: true } : status,
+            ),
+          );
+        } else {
+          // TODO: handle the case when the task completion fails
+        }
+      }
+    }
+  };
 
   const taskData = tasks?.map((task) => {
+    const isTaskCompleted = taskStatus?.find(
+      (status) => status.id === task.id,
+    )?.completed;
+
     return {
       title: task.name,
-      description: `${task.UserTasks?.length} people completed`,
+      description: `${task.UserTasks?.length || 0} people completed`,
       value: task.difficulty || "Not Specified",
       details: (
         <div>
@@ -64,8 +105,13 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
           </div>
 
           <div className="mt-4 flex w-full items-center justify-center">
-            <Button size={"lg"} variant={"accent"}>
-              Mark as completed
+            <Button
+              size={"lg"}
+              variant={"accent"}
+              onClick={() => handleCompleteTaskButton({ taskId: task.id })}
+              disabled={isTaskCompleted}
+            >
+              {isTaskCompleted ? "Completed" : "Mark as completed"}
             </Button>
           </div>
         </div>
