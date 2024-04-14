@@ -47,7 +47,7 @@ export async function getProject({
 }: {
   id?: number;
   name?: string;
-}): Promise<ProjectDataType | unknown> {
+}): Promise<ProjectDataType | undefined> {
   let response;
   let error;
   let url;
@@ -71,7 +71,7 @@ export async function getProject({
   } catch (e) {
     console.log(e);
     error = e;
-    return error;
+    return;
   }
 }
 

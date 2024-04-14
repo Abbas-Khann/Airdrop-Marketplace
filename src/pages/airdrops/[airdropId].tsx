@@ -22,9 +22,8 @@ function AirdropPage() {
       try {
         const response = await getProject({ id: id });
         if (response) {
-          // @ts-ignore
           // TODO: Fix this type error
-          setProjectData(response.projectData);
+          setProjectData(response);
         }
       } catch (error) {
         console.log(error);

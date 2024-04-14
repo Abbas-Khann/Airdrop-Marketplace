@@ -55,9 +55,9 @@ export default async function handler(
       id: Number(projectId),
       name: projectName,
     });
-    console.log(projectData);
+    // console.log(projectData);
     console.log("Project Data fetched");
-    res.status(200).json({ projectData });
+    res.status(200).json(projectData);
   } else {
     return res.status(405).end();
   }
