@@ -6,6 +6,7 @@ interface getProjectByIdProps {
   includeLinks?: boolean;
   includeTasks?: boolean;
   includeSteps?: boolean;
+  includeUserTasks?: boolean;
 }
 
 interface getProjectByNameProps {
@@ -14,6 +15,7 @@ interface getProjectByNameProps {
   includeLinks?: boolean;
   includeTasks?: boolean;
   includeSteps?: boolean;
+  includeUserTasks?: boolean;
 }
 
 // TODO: Do we also want to track how many users completed this in total
@@ -45,6 +47,7 @@ export const getProjectByID = async ({
   includeLinks = false,
   includeTasks = false,
   includeSteps = false,
+  includeUserTasks = false,
 }: getProjectByIdProps) => {
   return await prisma.project.findUnique({
     where: { id: projectId },
@@ -88,6 +91,13 @@ export const getProjectByID = async ({
                     },
                   }
                 : undefined,
+              UserTasks: includeUserTasks
+                ? {
+                    select: {
+                      id: true,
+                    },
+                  }
+                : undefined,
             },
           }
         : undefined,
@@ -101,6 +111,7 @@ export const getProjectByName = async ({
   includeLinks = false,
   includeTasks = false,
   includeSteps = false,
+  includeUserTasks = false,
 }: getProjectByNameProps) => {
   return await prisma.project.findFirstOrThrow({
     where: { name: { contains: projectName } },
@@ -141,6 +152,13 @@ export const getProjectByName = async ({
                       id: true,
                       name: true,
                       description: true,
+                    },
+                  }
+                : undefined,
+              UserTasks: includeUserTasks
+                ? {
+                    select: {
+                      id: true,
                     },
                   }
                 : undefined,

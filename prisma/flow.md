@@ -17,3 +17,10 @@
 - Users can bookmark / favourite their project ✅
 
 - Users Complete the task for a certain projects ✅
+
+## Stats
+
+- Fetch all the tasks in the project
+- Fetch how many of them user has completed for this project
+
+- Fetch the no of userTask for this project Id , which would give us all the no of people who completed the tasks

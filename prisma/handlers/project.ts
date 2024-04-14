@@ -103,6 +103,7 @@ export default async function getProject({ id, name }: getProjectProps) {
       includeLinks: true,
       includeTasks: true,
       includeSteps: true,
+      includeUserTasks: true,
     });
     return projectData;
   }
@@ -114,6 +115,7 @@ export default async function getProject({ id, name }: getProjectProps) {
       includeLinks: true,
       includeTasks: true,
       includeSteps: true,
+      includeUserTasks: true,
     });
     return projectData;
   }

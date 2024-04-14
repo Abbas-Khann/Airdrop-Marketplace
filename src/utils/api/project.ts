@@ -35,6 +35,9 @@ export type ProjectDataType = {
       name: string;
       description: string;
     }[];
+    UserTasks?: {
+      id: number;
+    }[];
   }[];
 };
 

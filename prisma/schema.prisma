@@ -96,6 +96,7 @@ model UserProject {
   id        Int     @id @default(autoincrement())
   userId    Int
   projectId Int
+  favourite Boolean
   Project   Project @relation(fields: [projectId], references: [id])
   User      User    @relation(fields: [userId], references: [id])
 }
