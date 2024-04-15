@@ -95,6 +95,8 @@ export const getProjectByID = async ({
                 ? {
                     select: {
                       id: true,
+                      userId: true,
+                      taskId: true,
                     },
                   }
                 : undefined,
