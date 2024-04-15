@@ -16,7 +16,7 @@ export type ProjectDataType = {
   likelihood: LikelihoodType;
   rating: number;
   featured: boolean;
-  network: string;
+  network: number[];
   createdAt: string;
   updatedAt: string;
   links?: {
@@ -85,7 +85,7 @@ export type CreateProjectType = {
   likelihood: LikelihoodType;
   rating: number;
   featured: boolean;
-  network: string;
+  network: number[];
   links?: { url: string; type: LinkType }[];
 };
 
