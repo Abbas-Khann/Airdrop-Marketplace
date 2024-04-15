@@ -146,6 +146,7 @@ export type CompleteTaskType = {
   taskId: number;
 };
 
+// TODO: Check that the task is not already completed
 export async function completeTask(props: CompleteTaskType) {
   return await newUserTask({
     userId: props.userId,
