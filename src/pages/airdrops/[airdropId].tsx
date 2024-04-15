@@ -22,7 +22,6 @@ function AirdropPage() {
       try {
         const response = await getProject({ id: id });
         if (response) {
-          // TODO: Fix this type error
           setProjectData(response);
         }
       } catch (error) {

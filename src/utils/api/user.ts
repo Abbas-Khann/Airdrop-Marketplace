@@ -86,7 +86,7 @@ export async function completeTask(data: CompleteTaskType) {
   }
 }
 
-export async function getUser(): Promise<UserData | undefined> {
+export async function getUserData(): Promise<UserData | undefined> {
   try {
     const response = await fetch("/api/user", {
       method: "GET",
@@ -101,5 +101,31 @@ export async function getUser(): Promise<UserData | undefined> {
     console.log(e);
     const error = e;
     return;
+  }
+}
+
+export async function getUser({ address }: { address: string }) {
+  try {
+    const response = await fetch(
+      `/api/user/getData?ethereumAddress=${address}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+    const data = await response.json();
+
+    return {
+      user: data.user,
+      response,
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
   }
 }

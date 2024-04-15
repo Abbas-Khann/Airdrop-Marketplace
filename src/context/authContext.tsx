@@ -2,7 +2,7 @@ import React, { ReactNode, createContext } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { privatePaths } from "../constants/privatePaths";
-import { UserData, getUser } from "@/utils/api/user";
+import { UserData, getUser, getUserData } from "@/utils/api/user";
 import { useAccount, useConfig } from "wagmi";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
 
@@ -35,8 +35,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // get the user data if the user address is connected and the data is not yet fetched
   // the user Data can be accessed globally from any state
   useEffect(() => {
-    async function getUserData() {
-      const user = await getUser();
+    async function getData() {
+      const user = await getUserData();
       if (user) {
         currentUserData.current = user;
       }
@@ -44,7 +44,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     if (address && !currentUserData) {
       setCurrentUser(address);
-      getUserData();
+      getData();
     }
   }, [address]);
 

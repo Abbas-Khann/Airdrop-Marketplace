@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Loader from "@/components/ui/loader";
+import { ShieldX } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
@@ -29,8 +30,6 @@ import { getProjects } from "@/utils/api/getProjects";
 import { Project, Task } from "@prisma/client";
 import arbitrumLogo from "public/chain-icons/arbitrum.svg";
 import { activeChains } from "@/constants/config/chainsConfig";
-
-// TODO: add supported chains to db schema for the project details
 
 const difficulty = [
   {
@@ -231,16 +230,31 @@ export default function AirdropsTable() {
                     <TableCell>{project.tasks?.length}</TableCell>
                     <TableCell className="rounded-r-xl text-center">
                       <span className="flex items-center">
-                        {activeChains.map((network, networkIdx) => (
-                          <Image
-                            src={network.iconUrl || ""}
-                            alt="network"
-                            key={networkIdx}
-                            width={20}
-                            height={20}
-                            className="rounded-full"
-                          />
-                        ))}
+                        <React.Fragment key={idx}>
+                          {project.network.length > 0 ? (
+                            project.network.map((chainId, index) => {
+                              const chain = activeChains.find(
+                                (c) => c.id === chainId,
+                              );
+                              if (chain) {
+                                return (
+                                  <Image
+                                    key={index}
+                                    src={chain.iconUrl || "/default-icon.png"}
+                                    alt={`${chain.name} network`}
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full"
+                                  />
+                                );
+                              } else {
+                                return null;
+                              }
+                            })
+                          ) : (
+                            <ShieldX />
+                          )}
+                        </React.Fragment>
                       </span>
                     </TableCell>
                   </TableRow>
