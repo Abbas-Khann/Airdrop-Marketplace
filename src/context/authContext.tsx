@@ -2,7 +2,7 @@ import React, { ReactNode, createContext } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { privatePaths } from "../constants/privatePaths";
-import { UserData, getUser, getUserData } from "@/utils/api/user";
+import { UserData, getUserData } from "@/utils/api/user";
 import { useAccount, useConfig } from "wagmi";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
 

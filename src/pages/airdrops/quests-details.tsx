@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import banner from "@/assets/dashboard/banner.svg";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import { Button } from "@/components/ui/button";
@@ -16,46 +16,58 @@ import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { getUserData, completeTask } from "@/utils/api/user";
 import { useState } from "react";
+import { useAuth } from "@/context/authContext";
 
 interface ProjectDataProps {
   projectData: ProjectDataType;
+}
+
+interface TaskStatus {
+  id: number;
+  completed: boolean;
 }
 
 export default function QuestsDetails({ projectData }: ProjectDataProps) {
   const { tasks } = projectData;
   const account = useAccount();
   const { openConnectModal } = useConnectModal();
+  const { currentUserData } = useAuth();
 
-  const [taskStatus, setTaskStatus] = useState(
-    tasks?.map((task) => ({ id: task.id, completed: false })),
-  );
+  const [taskStatus, setTaskStatus] = useState<TaskStatus[]>([]);
 
   const handleCompleteTaskButton = async ({ taskId }: { taskId: number }) => {
     if (!account.isConnected && openConnectModal) {
       return openConnectModal();
     }
 
-    if (account.address) {
-      const response = await getUser({ address: account.address });
-      const user = response?.user;
+    if (currentUserData.current?.id) {
+      const completionResponse = (await completeTask({
+        userId: currentUserData.current?.id,
+        taskId: taskId,
+      })) as Response;
 
-      if (user) {
-        const completionResponse = (await completeTask({
-          userId: user.id,
-          taskId: taskId,
-        })) as Response;
-        if (completionResponse.ok) {
-          setTaskStatus((prevStatus) =>
-            (prevStatus ?? []).map((status) =>
-              status.id === taskId ? { ...status, completed: true } : status,
-            ),
-          );
-        } else {
-          // TODO: handle the case when the task completion fails
-        }
+      if (completionResponse.ok) {
+        setTaskStatus((prevStatus) =>
+          prevStatus.map((status) =>
+            status.id === taskId ? { ...status, completed: true } : status,
+          ),
+        );
       }
     }
   };
+
+  useEffect(() => {
+    if (tasks) {
+      const initialStatus = tasks.map((task) => ({
+        id: task.id,
+        completed:
+          task.UserTasks?.some((ut) => ut.id === currentUserData.current?.id) ??
+          false,
+      }));
+
+      setTaskStatus(initialStatus);
+    }
+  }, [tasks, currentUserData]);
 
   const taskData = tasks?.map((task) => {
     const isTaskCompleted = taskStatus?.find(
