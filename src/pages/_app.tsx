@@ -1,4 +1,3 @@
-import { type AppType } from "next/app";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -14,6 +13,9 @@ import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import type { Session } from "next-auth";
 import { wagmiConfig, theme } from "@/constants/config/wagmiConfig";
+import React from "react";
+
+import { AuthContextProvider } from "@/context/authContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,7 +43,9 @@ function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
                   defaultTheme="dark"
                   // enableSystem={true}
                 >
-                  <Component {...pageProps} />
+                  <AuthContextProvider>
+                    <Component {...pageProps} />
+                  </AuthContextProvider>
                 </ThemeProvider>
               </RainbowKitProvider>
             </RainbowKitSiweNextAuthProvider>

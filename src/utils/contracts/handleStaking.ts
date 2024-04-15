@@ -116,7 +116,7 @@ export const handleUnstake = async ({
   }
 };
 
-export const getUserStakingStatsasync = async ({
+export const getUserStakingStats = async ({
   toAddress,
   config,
 }: {
@@ -154,7 +154,7 @@ export const getUserStakingStatsasync = async ({
     };
   } catch (error) {
     console.log(error);
-    return error;
+    return;
   }
 };
 

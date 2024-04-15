@@ -1,3 +1,4 @@
+import { ContractType, InteractionType, RewardType } from "@prisma/client";
 import { prisma } from "../client";
 
 interface getUserProps {
@@ -7,6 +8,36 @@ interface getUserProps {
   includeProjects?: boolean;
   includeTasks?: boolean;
 }
+type UserData = {
+  ethereumAddress: string;
+  id: number;
+  inviteCode: string;
+  interactions?: {
+    id: number;
+    type: InteractionType;
+    contractType?: ContractType | null;
+    chainId?: number | null;
+    points: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  UserRewards?: {
+    id: number;
+    type: RewardType;
+    points: number;
+    claimedAt: Date;
+  }[];
+  UserProjects?: {
+    id: number;
+    projectId: number;
+    favourite: boolean;
+  }[];
+  UserTasks?: {
+    id: number;
+    taskId: number;
+    completed: boolean;
+  }[];
+};
 
 export const getUser = async ({
   ethAddress,
@@ -14,7 +45,7 @@ export const getUser = async ({
   includeRewards = false,
   includeProjects = false,
   includeTasks = false,
-}: getUserProps) => {
+}: getUserProps): Promise<UserData | null> => {
   return await prisma.user.findUnique({
     where: { ethereumAddress: ethAddress },
     select: {

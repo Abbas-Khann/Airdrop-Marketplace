@@ -1,5 +1,6 @@
 import { getUser } from "../get/userData";
 import { createUser } from "../create/newUser";
+import { ContractType, InteractionType, RewardType } from "@prisma/client";
 
 type handleUserProps = {
   ethAddress: string;
