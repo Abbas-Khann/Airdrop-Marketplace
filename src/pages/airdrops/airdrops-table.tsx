@@ -30,6 +30,8 @@ import { getProjects } from "@/utils/api/getProjects";
 import { Project, Task } from "@prisma/client";
 import arbitrumLogo from "public/chain-icons/arbitrum.svg";
 import { activeChains } from "@/constants/config/chainsConfig";
+import { useAuth } from "@/context/authContext";
+import { favouriteProject } from "@/utils/api/user";
 
 const difficulty = [
   {
@@ -90,8 +92,43 @@ interface ProjectWithTask extends Project {
   tasks: Task[];
 }
 
+interface FavouriteProjects {
+  projectId: number;
+  isFavourite: boolean;
+}
+
 export default function AirdropsTable() {
   const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
+  const { currentUserData } = useAuth();
+
+  // TODO: figure out why UserProjects returns an empty array from currentUserData
+  const [favouriteProjects, setFavouriteProjects] = useState<
+    FavouriteProjects[]
+  >([]);
+
+  const handleAddToFavourites = async ({
+    projectId,
+  }: {
+    projectId: number;
+  }) => {
+    const userId = currentUserData.current?.id;
+    if (!userId) {
+      return console.error("User is not logged in");
+    }
+    const response = (await favouriteProject({
+      userId,
+      projectId,
+    })) as Response;
+
+    if (response.ok) {
+      setFavouriteProjects((prev) => [
+        ...prev,
+        { projectId, isFavourite: true },
+      ]);
+    } else {
+      console.error("Failed to add project to favourites");
+    }
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -105,6 +142,20 @@ export default function AirdropsTable() {
         setProjectData([]);
       }
     };
+
+    console.log("currentUserData", currentUserData.current);
+
+    const initialState = currentUserData.current?.UserProjects?.map(
+      (project) => ({
+        projectId: project.projectId,
+        isFavourite: project.favourite,
+      }),
+    );
+
+    console.log("initialState", initialState);
+    if (initialState) {
+      setFavouriteProjects(initialState);
+    }
 
     fetchProjects();
   }, []);
@@ -201,7 +252,11 @@ export default function AirdropsTable() {
                 <React.Fragment key={idx}>
                   <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
                     <TableCell className="cursor-pointer rounded-l-xl">
-                      <Star />
+                      <Star
+                        onClick={() =>
+                          handleAddToFavourites({ projectId: project.id })
+                        }
+                      />
                     </TableCell>
                     <TableCell className="font-medium">{idx + 1}</TableCell>
                     <TableCell>
