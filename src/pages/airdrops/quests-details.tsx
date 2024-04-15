@@ -14,9 +14,10 @@ import { ProjectDataType } from "@/utils/api/project";
 import Loader from "@/components/ui/loader";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { getUserData, completeTask } from "@/utils/api/user";
+import { completeTask } from "@/utils/api/user";
 import { useState } from "react";
 import { useAuth } from "@/context/authContext";
+import { BadgeCheck } from "lucide-react";
 
 interface ProjectDataProps {
   projectData: ProjectDataType;
@@ -53,6 +54,9 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
           ),
         );
       }
+    } else {
+      // TODO: handle the case when completion fails
+      console.error("User data not found");
     }
   };
 
@@ -61,8 +65,9 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
       const initialStatus = tasks.map((task) => ({
         id: task.id,
         completed:
-          task.UserTasks?.some((ut) => ut.id === currentUserData.current?.id) ??
-          false,
+          task.UserTasks?.some(
+            (ut) => ut.userId === currentUserData.current?.id,
+          ) ?? false,
       }));
 
       setTaskStatus(initialStatus);
@@ -78,6 +83,7 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
       title: task.name,
       description: `${task.UserTasks?.length || 0} people completed`,
       value: task.difficulty || "Not Specified",
+      isCompleted: isTaskCompleted,
       details: (
         <div>
           <div className="space-y-3">
@@ -116,16 +122,20 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
             )}
           </div>
 
-          <div className="mt-4 flex w-full items-center justify-center">
-            <Button
-              size={"lg"}
-              variant={"accent"}
-              onClick={() => handleCompleteTaskButton({ taskId: task.id })}
-              disabled={isTaskCompleted}
-            >
-              {isTaskCompleted ? "Completed" : "Mark as completed"}
-            </Button>
-          </div>
+          {isTaskCompleted ? (
+            <></>
+          ) : (
+            <div className="mt-4 flex w-full items-center justify-center">
+              <Button
+                size={"lg"}
+                variant={"accent"}
+                onClick={() => handleCompleteTaskButton({ taskId: task.id })}
+                disabled={isTaskCompleted}
+              >
+                Mark as completed
+              </Button>
+            </div>
+          )}
         </div>
       ),
     };
@@ -147,35 +157,44 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
             </DashboardCard>
           </div>
 
-          {taskData?.map(({ title, description, value, details }, idx) => (
-            <Accordion
-              key={idx}
-              type="single"
-              collapsible
-              className=" md:max-w-md"
-            >
-              <AccordionItem value="title">
-                <AccordionTrigger
-                  className="flex flex-wrap items-center justify-between "
-                  key={idx}
-                >
-                  <div className="flex flex-col text-start">
-                    <Typography variant={"large"}>{title}</Typography>
-                    <Typography
-                      variant={"smallTitle"}
-                      className="text-neutral-600 dark:text-neutral-300"
-                    >
-                      {description}
-                    </Typography>
-                  </div>
-                  <div>
-                    <Typography>{value}</Typography>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>{details}</AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          ))}
+          {taskData?.map(
+            ({ title, description, value, details, isCompleted }, idx) => (
+              <Accordion
+                key={idx}
+                type="single"
+                collapsible
+                className=" md:max-w-md"
+              >
+                <AccordionItem value="title">
+                  <AccordionTrigger
+                    className="flex flex-wrap items-center justify-between "
+                    key={idx}
+                  >
+                    <div className="flex flex-col text-start">
+                      <Typography variant={"large"}>{title}</Typography>
+                      <Typography
+                        variant={"smallTitle"}
+                        className="text-neutral-600 dark:text-neutral-300"
+                      >
+                        {description}
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography className="flex gap-2">
+                        {value}{" "}
+                        {isCompleted ? (
+                          <BadgeCheck className="text-green-400" />
+                        ) : (
+                          ""
+                        )}
+                      </Typography>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>{details}</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ),
+          )}
         </div>
       ) : (
         <Loader />
