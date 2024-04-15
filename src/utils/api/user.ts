@@ -15,6 +15,7 @@ export type UserData = {
   ethereumAddress: string;
   id: number;
   inviteCode: string;
+  createdAt: Date;
   interactions?: {
     id: number;
     type: InteractionType;

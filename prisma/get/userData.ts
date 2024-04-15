@@ -12,6 +12,7 @@ type UserData = {
   ethereumAddress: string;
   id: number;
   inviteCode: string;
+  createdAt: Date;
   interactions?: {
     id: number;
     type: InteractionType;
@@ -52,6 +53,7 @@ export const getUser = async ({
       ethereumAddress: true,
       id: true,
       inviteCode: true,
+      createdAt: true,
       interactions: includeInteractions
         ? {
             select: {
