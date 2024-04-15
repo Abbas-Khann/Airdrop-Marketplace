@@ -35,6 +35,8 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
   const { currentUserData } = useAuth();
 
   const [taskStatus, setTaskStatus] = useState<TaskStatus[]>([]);
+  const [totalTasksCompletedByUser, setTotalTasksCompletedByUser] = useState(0);
+  const [totalTaskCompletions, setTotalTaskCompletions] = useState(0);
 
   const handleCompleteTaskButton = async ({ taskId }: { taskId: number }) => {
     if (!account.isConnected && openConnectModal) {
@@ -70,7 +72,19 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
           ) ?? false,
       }));
 
+      const totalTasksCompletedByUser = taskStatus.filter(
+        (status) => status.completed,
+      ).length;
+
+      const totalTaskCompletions =
+        tasks?.reduce(
+          (total, task) => total + (task.UserTasks?.length || 0),
+          0,
+        ) || 0;
+
       setTaskStatus(initialStatus);
+      setTotalTasksCompletedByUser(totalTasksCompletedByUser);
+      setTotalTaskCompletions(totalTaskCompletions);
     }
   }, [tasks, currentUserData]);
 
@@ -149,10 +163,10 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
             <Image src={banner} alt="banner" className=" w-full" />
             <DashboardCard className="flex w-full items-center justify-between p-5">
               <Typography variant={"smallTitle"}>
-                0/3 Quest completed
+                {totalTasksCompletedByUser}/{tasks?.length} Tasks completed
               </Typography>
               <Typography variant={"smallTitle"}>
-                304 people completed
+                {totalTaskCompletions} people completed
               </Typography>
             </DashboardCard>
           </div>
