@@ -7,12 +7,15 @@ import dynamic from "next/dynamic";
 import { getProject } from "@/utils/api/project";
 import { useRouter } from "next/router";
 import { ProjectDataType } from "@/utils/api/project";
+import { useAuth } from "@/context/authContext";
 
 interface ProjectDataProps {
   projectData: ProjectDataType;
 }
 
 function AirdropPage() {
+  const { currentUserData } = useAuth();
+
   const router = useRouter();
   const [projectData, setProjectData] = useState<ProjectDataProps | {}>({});
 

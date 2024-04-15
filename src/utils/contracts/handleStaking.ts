@@ -132,19 +132,19 @@ export const getUserStakingStats = async ({
   }
 
   try {
-    const earnedRewards = await publicClient.readContract({
-      account,
-      address: Staking_Morph_Address,
-      abi: Staking_Morph_ABI,
-      functionName: "earned",
-      args: [toAddress],
-    });
-
     const stakedAmount = await publicClient.readContract({
       account,
       address: Staking_Morph_Address,
       abi: Staking_Morph_ABI,
       functionName: "balanceOf",
+      args: [toAddress],
+    });
+
+    const earnedRewards = await publicClient.readContract({
+      account,
+      address: Staking_Morph_Address,
+      abi: Staking_Morph_ABI,
+      functionName: "earned",
       args: [toAddress],
     });
 

@@ -1,1 +1,1 @@
-export const privatePaths = ["/airdrops/*"];
+export const privatePaths = ["/airdrops/[airdropId]"];

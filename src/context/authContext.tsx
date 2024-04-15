@@ -25,7 +25,7 @@ export const useAuth = () => {
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<`0x${string}` | undefined>();
-  const currentUserData = useRef<UserData | undefined>();
+  const currentUserData = useRef<UserData | undefined>(undefined);
   const router = useRouter();
   const { address } = useAccount();
   const config = useConfig();
@@ -42,22 +42,24 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    if (address && !currentUserData) {
+    if (address && !currentUserData.current) {
       setCurrentUser(address);
       getData();
     }
-  }, [address]);
+  }, []);
 
   useEffect(() => {
     const authCheck = async () => {
       if (privatePaths.includes(router.pathname)) {
         if (!currentUser) {
           // If the wallet is not connected and the user tries to access then push to home page and sak to connect
-          void router.push({
-            pathname: "/",
-          });
+          // void router.push({
+          //   pathname: "/",
+          // });
           return;
         }
+
+        console.log("Private Path accessed");
 
         // // Add a check and see if the User has staked yet or not
         // const stakeInfo = await getUserStakingStats({
@@ -65,21 +67,24 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         //   config: config,
         // });
 
+        // console.log(stakeInfo);
         // if (stakeInfo) {
         //   const { stakedAmount } = stakeInfo;
         //   const hasStaked = Number(stakedAmount) > 0 ? true : false;
+        //   console.log("Access Allowed");
         //   setAuthorized(hasStaked);
         //   if (!hasStaked) {
-        //     void router.push({
-        //       pathname: "/stake",
-        //     });
+        //     // void router.push({
+        //     //   pathname: "/stake",
+        //     // });
         //   }
         // } else {
+        //   console.log("Access Restricted");
         //   setAuthorized(false);
         //   // dispatch(setRedirectLink({ goto: router.asPath }));
-        //   void router.push({
-        //     pathname: "/stake",
-        //   });
+        //   // void router.push({
+        //   //   pathname: "/stake",
+        //   // });
         // }
         setAuthorized(true);
       } else {
@@ -98,7 +103,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       router.events.off("routeChangeStart", preventAccess);
       router.events.off("routeChangeComplete", authCheck);
     };
-  }, [router, router.events, currentUser]);
+  }, [router]);
 
   const value = {
     currentUser,

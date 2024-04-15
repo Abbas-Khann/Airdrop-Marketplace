@@ -32,7 +32,7 @@ export type CreateProjectType = {
   likelihood: string;
   rating: number;
   featured: boolean;
-  network: string;
+  network: number[];
   links?: { url: string; type: string }[];
 };
 

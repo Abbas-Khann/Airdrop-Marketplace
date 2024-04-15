@@ -16,7 +16,7 @@ export type NewProjectProps = {
   likelihood: LikelihoodType;
   rating: number;
   featured: boolean;
-  network: string;
+  network: number[];
   links?: { url: string; type: LinkType }[];
 };
 
