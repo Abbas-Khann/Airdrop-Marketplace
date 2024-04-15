@@ -14,7 +14,7 @@ import { ProjectDataType } from "@/utils/api/project";
 import Loader from "@/components/ui/loader";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { getUser, completeTask } from "@/utils/api/user";
+import { getUserData, completeTask } from "@/utils/api/user";
 import { useState } from "react";
 
 interface ProjectDataProps {
