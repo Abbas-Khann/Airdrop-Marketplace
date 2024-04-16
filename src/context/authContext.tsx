@@ -13,6 +13,8 @@ interface AuthContextProps {
   currentUserData: React.MutableRefObject<UserData | undefined>;
   currentUser: `0x${string}` | undefined;
   authorized: boolean;
+  setHasChanged: (value: boolean) => void;
+  hasChanged: boolean;
 }
 
 export const AuthContext = createContext<AuthContextProps>(
@@ -31,22 +33,30 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const config = useConfig();
 
   const [authorized, setAuthorized] = useState<boolean>(false);
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
+
+  async function getData() {
+    const user = await getUserData();
+    if (user) {
+      currentUserData.current = user;
+    }
+  }
 
   // get the user data if the user address is connected and the data is not yet fetched
   // the user Data can be accessed globally from any state
   useEffect(() => {
-    async function getData() {
-      const user = await getUserData();
-      if (user) {
-        currentUserData.current = user;
-      }
-    }
-
     if (address && !currentUserData.current) {
       setCurrentUser(address);
       getData();
     }
-  }, []);
+  }, [router.pathname, address]);
+
+  useEffect(() => {
+    if (hasChanged) {
+      getData();
+      setHasChanged(false);
+    }
+  }, [hasChanged]);
 
   useEffect(() => {
     const authCheck = async () => {
@@ -109,6 +119,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     currentUser,
     currentUserData,
     authorized,
+    setHasChanged,
+    hasChanged,
   };
 
   return (
