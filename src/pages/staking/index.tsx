@@ -16,25 +16,34 @@ import { useAuth } from "@/context/authContext";
 export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
   const [userWalletBalance, setUserWalletBalance] = useState(0); // This should be fetched from the contract [TODO]
-  const [stakedBalance, setStakedBalance] = useState(0); // This should be fetched from the contract [TODO]
+  const [stakedBalance, setStakedBalance] = useState<number>(); // This should be fetched from the contract [TODO]
   const config = useConfig();
 
   // TODO: Fetch user stats from the contract
   // TODO: 1. UserWallet balance, 2. Staked balance, 3. APR, 4. Total Staked, 5. Total Users Staking(nice to have if possible)
   useEffect(() => {
     const fetchStakingStats = async () => {
-      if (currentUserData.current?.ethereumAddress) {
+      if (
+        currentUserData.current?.ethereumAddress &&
+        stakedBalance == undefined
+      ) {
         const stats = await getUserStakingStats({
-          toAddress: "0xe99B5a6403e8E0d7f75B1af421d1415A913DF588",
+          toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
           config: config,
         });
 
         console.log(stats);
-
-        // setUserWalletBalance(stats.walletBalance);
-        // setStakedBalance(stats.stakedBalance);
+        if (stats) {
+          // setUserWalletBalance(stats.walletBalance);
+          setStakedBalance(Number(stats.stakedAmount));
+        }
       }
     };
+
+    // For total Amount Staked , getTotalStakedAmount
+    // For user wallet balance for Morph , getMorphTokenBalance
+    // For total user staked , not possible at this point
+
     fetchStakingStats();
   }, []);
 
