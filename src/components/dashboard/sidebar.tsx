@@ -3,7 +3,15 @@ import logo from "@/assets/logo-symbol.svg";
 import logoDark from "@/assets/dark-logo.svg";
 import logoLight from "@/assets/light-logo.svg";
 import { cn } from "@/lib/utils";
-import { Home, LucideIcon, Star, Trophy, UserCircle, Zap } from "lucide-react";
+import {
+  Home,
+  LucideIcon,
+  Star,
+  Trophy,
+  UserCircle,
+  Zap,
+  Shrub,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +37,11 @@ const links: Links[] = [
     title: "Profile",
     icon: UserCircle,
     path: "/profile",
+  },
+  {
+    title: "Staking",
+    icon: Shrub,
+    path: "/staking",
   },
   {
     title: "Airdrop Hunter",
