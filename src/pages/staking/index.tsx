@@ -21,22 +21,22 @@ export default function AirdropHunterPage() {
 
   // TODO: Fetch user stats from the contract
   // TODO: 1. UserWallet balance, 2. Staked balance, 3. APR, 4. Total Staked, 5. Total Users Staking(nice to have if possible)
-  //   useEffect(() => {
-  //     const fetchStakingStats = async () => {
-  //       if (currentUserData.current?.ethereumAddress) {
-  //         const stats = await getUserStakingStats({
-  //           toAddress: currentUserData.current?.ethereumAddress,
-  //           config: config,
-  //         });
+  useEffect(() => {
+    const fetchStakingStats = async () => {
+      if (currentUserData.current?.ethereumAddress) {
+        const stats = await getUserStakingStats({
+          toAddress: "0xe99B5a6403e8E0d7f75B1af421d1415A913DF588",
+          config: config,
+        });
 
-  //         console.log(stats);
+        console.log(stats);
 
-  //         // setUserWalletBalance(stats.walletBalance);
-  //         // setStakedBalance(stats.stakedBalance);
-  //       }
-  //     };
-  //     fetchStakingStats();
-  //   }, []);
+        // setUserWalletBalance(stats.walletBalance);
+        // setStakedBalance(stats.stakedBalance);
+      }
+    };
+    fetchStakingStats();
+  }, []);
 
   return (
     <DashboardLayout>

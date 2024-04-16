@@ -21,7 +21,7 @@ export const Unstake = ({
   const [unstakeAmount, setUnstakeAmount] = useState("");
   const config = useConfig();
 
-  const handleUnstake = async () => {
+  const _handleUnstake = async () => {
     console.log("Unstake button clicked");
     // Call the unstake function here with unstakeAmount
     if (unstakeAmount !== "") {
@@ -60,7 +60,7 @@ export const Unstake = ({
         className="rounded-xl bg-[#E9E9E9] text-black dark:bg-white/30"
       />
 
-      <Button variant={"outline"} onClick={handleUnstake}>
+      <Button variant={"outline"} onClick={_handleUnstake}>
         Unstake Tokens
       </Button>
     </div>

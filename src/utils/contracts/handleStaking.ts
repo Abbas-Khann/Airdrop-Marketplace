@@ -139,6 +139,7 @@ export const getUserStakingStats = async ({
       functionName: "balanceOf",
       args: [toAddress],
     });
+    console.log(stakedAmount);
 
     const earnedRewards = await publicClient.readContract({
       account,
@@ -147,6 +148,8 @@ export const getUserStakingStats = async ({
       functionName: "earned",
       args: [toAddress],
     });
+
+    console.log(earnedRewards);
 
     return {
       stakedAmount: formatEther(stakedAmount),

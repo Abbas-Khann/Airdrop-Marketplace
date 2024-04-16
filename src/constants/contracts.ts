@@ -1,6 +1,6 @@
 export const Morph_Token_Address = "0x01302696757447c7d771a29b04509E3Fe33Fb55E";
 export const Staking_Morph_Address =
-  "0x9D0CF5672A4FFfaa6BA58DB070Ae1Da8D0F130af";
+  "0xDD6662f373f8BD7150f072BC2dCF4b24Ab942b67";
 export const RMorph_Token_Address =
   "0xa2484Ed60a4e9458BbAe7eFE12c1d25394D97450";
 
@@ -671,16 +671,6 @@ export const Staking_Morph_ABI = [
         internalType: "address",
         name: "_rewardToken",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_rewardRate",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_duration",
-        type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
