@@ -5,7 +5,7 @@ import { InteractionType } from "@prisma/client";
 import { getCsrfToken } from "next-auth/react";
 import {
   FavouriteProjectType,
-  favouriteProject,
+  handleFavouriteProject,
 } from "prisma/handlers/project";
 
 export default async function handler(
@@ -34,7 +34,7 @@ export default async function handler(
   }
 
   try {
-    await favouriteProject(body);
+    await handleFavouriteProject(body);
     console.log("Project Favourited for user");
     res.status(200).json({ message: "Project Favourited for user" });
   } catch (error) {

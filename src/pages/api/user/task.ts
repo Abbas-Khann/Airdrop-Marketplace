@@ -6,8 +6,7 @@ import { getCsrfToken } from "next-auth/react";
 import {
   CompleteTaskType,
   FavouriteProjectType,
-  completeTask,
-  favouriteProject,
+  handleCompleteTask,
 } from "prisma/handlers/project";
 
 export default async function handler(
@@ -36,7 +35,7 @@ export default async function handler(
   }
 
   try {
-    await completeTask(body);
+    await handleCompleteTask(body);
     console.log("Task completed for user");
     res.status(200).json({ message: "Task completed for user" });
   } catch (error) {

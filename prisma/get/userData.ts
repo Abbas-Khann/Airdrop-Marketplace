@@ -98,3 +98,63 @@ export const getUser = async ({
     },
   });
 };
+
+type UserTaskData = {
+  id: number;
+  completed: boolean;
+  userId: number;
+  taskId: number;
+};
+
+export const getUserTask = async ({
+  userId,
+  taskId,
+}: {
+  userId: number;
+  taskId: number;
+}): Promise<UserTaskData | null> => {
+  return await prisma.userTask.findFirst({
+    where: {
+      AND: {
+        userId: userId,
+        taskId: taskId,
+      },
+    },
+    select: {
+      id: true,
+      completed: true,
+      userId: true,
+      taskId: true,
+    },
+  });
+};
+
+type UserProjectData = {
+  id: number;
+  favourite: boolean;
+  userId: number;
+  projectId: number;
+};
+
+export const getUserProject = async ({
+  userId,
+  projectId,
+}: {
+  userId: number;
+  projectId: number;
+}): Promise<UserProjectData | null> => {
+  return await prisma.userProject.findFirst({
+    where: {
+      AND: {
+        userId: userId,
+        projectId: projectId,
+      },
+    },
+    select: {
+      id: true,
+      favourite: true,
+      userId: true,
+      projectId: true,
+    },
+  });
+};

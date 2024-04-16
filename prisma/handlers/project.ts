@@ -1,4 +1,4 @@
-import { getUser } from "../get/userData";
+import { getUser, getUserProject, getUserTask } from "../get/userData";
 import { createUser } from "../create/newUser";
 import {
   getAllProjects,
@@ -133,7 +133,17 @@ export type FavouriteProjectType = {
   projectId: number;
 };
 
-export async function favouriteProject(props: FavouriteProjectType) {
+export async function handleFavouriteProject(props: FavouriteProjectType) {
+  // Check if a User Project exists for the projectId & user Id
+  const userProject = await getUserProject({
+    userId: props.userId,
+    projectId: props.projectId,
+  });
+
+  if (userProject) {
+    return userProject;
+  }
+
   return await newUserProject({
     userId: props.userId,
     projectId: props.projectId,
@@ -147,7 +157,17 @@ export type CompleteTaskType = {
 };
 
 // TODO: Check that the task is not already completed
-export async function completeTask(props: CompleteTaskType) {
+export async function handleCompleteTask(props: CompleteTaskType) {
+  const userTask = await getUserTask({
+    userId: props.userId,
+    taskId: props.taskId,
+  });
+
+  if (userTask) {
+    return userTask;
+  }
+
+  // Check if the UserTask exists for the taskId & userId
   return await newUserTask({
     userId: props.userId,
     taskId: props.taskId,
