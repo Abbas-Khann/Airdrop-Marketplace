@@ -7,75 +7,73 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import milkyWay from "@/assets/dashboard/milkyway.svg";
-import network1 from "@/assets/dashboard/eth.svg";
-import network2 from "@/assets/dashboard/network2.svg";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@/components/ui/typography";
+import { useAuth } from "@/context/authContext";
+import { getProjects } from "@/utils/api/getProjects";
+import { ProjectDataType } from "@/utils/api/project";
+import { activeChains } from "@/constants/config/chainsConfig";
+import { ShieldX } from "lucide-react";
 
-const mockData = [
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-  {
-    protocol: {
-      name: "MilkyWay",
-      description:
-        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti enim illum quod, nihil corporis optio repudiandae blanditiis ab repellendus, harum debitis, praesentium neque! Praesentium, ad. Eum molestiae vel accusamus in.",
-      logo: milkyWay,
-    },
-    difficulty: "Easy",
-    category: "Wallet",
-    likelihood: "High",
-    quest: "0/2",
-    networks: [network1, network2],
-  },
-];
+interface ProjectDataProps {
+  projectData: ProjectDataType;
+}
 
 export default function FavouritesTable() {
+  const [projectData, setProjectData] = useState<ProjectDataProps | {}>({});
+  const [favouriteProjectsData, setFavouriteProjectsData] = useState<
+    ProjectDataType[]
+  >([]);
+
+  const { currentUserData } = useAuth();
+
+  const filterFavouriteProjects = (projects: ProjectDataType[]) => {
+    if (!currentUserData.current?.UserProjects) {
+      return;
+    }
+    const favouriteProjectIds =
+      currentUserData.current?.UserProjects.filter(
+        (project) => project.favourite,
+      ).map((project) => project.projectId) || [];
+
+    const favProjects = projects.filter((project) =>
+      favouriteProjectIds.includes(project.id),
+    );
+    setFavouriteProjectsData(favProjects);
+  };
+
+  useEffect(() => {
+    if (currentUserData.current?.UserProjects) {
+      const favouriteProjectIds =
+        currentUserData.current?.UserProjects.filter((p) => p.favourite).map(
+          (p) => p.projectId,
+        ) || [];
+    }
+
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response && Array.isArray(response)) {
+          setProjectData(response);
+          filterFavouriteProjects(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+        setProjectData([]);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   return (
     <>
       <div className="space-y-6 py-6 md:space-y-12">
         <Typography variant={"h2"} className=" font-raleway">
-          {mockData.length} Airdrops
+          {currentUserData.current?.UserProjects?.length ?? 0} Airdrops
         </Typography>
       </div>
       <Table>
@@ -93,41 +91,61 @@ export default function FavouritesTable() {
         </TableHeader>
         <div className="my-2" />
         <TableBody>
-          {mockData.map((data, idx) => (
+          {favouriteProjectsData.map((project, idx) => (
             <React.Fragment key={idx}>
               <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
                 <TableCell className=" cursor-pointer rounded-l-xl">
-                  <Star />
+                  <Star className="text-yellow-400" />
                 </TableCell>
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell>
                   <Link
-                    href={`/airdrop/${data.protocol.name}`}
+                    href={`/airdrops/${project.name}`}
                     className=" flex items-center gap-2"
                   >
-                    <Image src={data.protocol.logo} alt={data.protocol.name} />
+                    <Image src={milkyWay} alt={project.name} />
                     <span className="block space-y-0">
-                      <Typography variant={"large"}>
-                        {data.protocol.name}
-                      </Typography>
+                      <Typography variant={"large"}>{project.name}</Typography>
                       <Typography
                         variant={"paragraph"}
                         className=" max-w-[20ch] truncate"
                       >
-                        {data.protocol.description}
+                        {project.shortDescription}
                       </Typography>
                     </span>
                   </Link>
                 </TableCell>
-                <TableCell>{data.difficulty}</TableCell>
-                <TableCell>{data.category}</TableCell>
-                <TableCell>{data.likelihood}</TableCell>
-                <TableCell>{data.quest}</TableCell>
+                <TableCell>{project.difficulty}</TableCell>
+                <TableCell>{project.category}</TableCell>
+                <TableCell>{project.likelihood}</TableCell>
+                <TableCell>{project.tasks?.length}</TableCell>
                 <TableCell className="rounded-r-xl text-center">
                   <span className="flex items-center">
-                    {data.networks.map((network, idx) => (
-                      <Image src={network} alt="network" key={idx} />
-                    ))}
+                    <React.Fragment key={idx}>
+                      {project.network.length > 0 ? (
+                        project.network.map((chainId, index) => {
+                          const chain = activeChains.find(
+                            (c) => c.id === chainId,
+                          );
+                          if (chain) {
+                            return (
+                              <Image
+                                key={index}
+                                src={chain.iconUrl || "/default-icon.png"}
+                                alt={`${chain.name} network`}
+                                width={20}
+                                height={20}
+                                className="rounded-full"
+                              />
+                            );
+                          } else {
+                            return null;
+                          }
+                        })
+                      ) : (
+                        <ShieldX />
+                      )}
+                    </React.Fragment>
                   </span>
                 </TableCell>
               </TableRow>
