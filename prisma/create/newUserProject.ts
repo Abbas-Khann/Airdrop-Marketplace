@@ -23,7 +23,7 @@ export default async function newUserProject({
   });
 }
 
-type ToggleUserProjectFavouritesProps = {
+export type ToggleUserProjectFavouritesProps = {
   userProjectId: number;
   favourite: boolean;
 };

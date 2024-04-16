@@ -65,12 +65,64 @@ export async function favouriteProject(data: FavouriteProjectType) {
   }
 }
 
+export type ToggleFavouriteProjectType = {
+  userTaskId: number;
+  favourite: boolean;
+};
+export async function toggleFavouriteProject(data: ToggleFavouriteProjectType) {
+  let response;
+  let error;
+
+  try {
+    response = await fetch("/api/user/toggleFavourite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+      }),
+    });
+    return response;
+  } catch (e) {
+    console.log(e);
+    error = e;
+    return error;
+  }
+}
+
 export async function completeTask(data: CompleteTaskType) {
   let response;
   let error;
 
   try {
     response = await fetch("/api/user/task", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+      }),
+    });
+    return response;
+  } catch (e) {
+    console.log(e);
+    error = e;
+    return error;
+  }
+}
+
+export type ToggleCompleteProjectType = {
+  userTaskId: number;
+  completed: boolean;
+};
+export async function ToggleCompleteTask(data: ToggleCompleteProjectType) {
+  let response;
+  let error;
+
+  try {
+    response = await fetch("/api/user/toggleComplete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

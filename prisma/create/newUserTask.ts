@@ -23,7 +23,7 @@ export default async function newUserTask({
   });
 }
 
-type ToggleUserTaskCompletionProps = {
+export type ToggleUserTaskCompletionProps = {
   userTaskId: number;
   completed: boolean;
 };
