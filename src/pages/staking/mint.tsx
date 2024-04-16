@@ -14,20 +14,21 @@ interface MintProps {
 export const Mint = ({ setUserBalance }: MintProps) => {
   const [mintAmount, setMintAmount] = useState("");
   const account = useAccount();
+  const config = useConfig();
 
   const handleMintButton = async () => {
-    console.log("Mint button clicked");
-    // Call the mint function here with mintAmount
     if (mintAmount !== "" && account.address) {
       const tx = await handleMorphTokenMint({
         toAddress: account.address,
         amount: Number(mintAmount),
-        config: useConfig(),
+        config: config,
       });
 
       if (tx) {
+        // TODO: Update the user wallet balance and handle the case if user has already a balance
         console.log("Minted successfully");
         setMintAmount("");
+        setUserBalance(Number(mintAmount));
       }
     }
   };

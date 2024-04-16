@@ -6,8 +6,10 @@ import { Stake } from "./stake";
 import { Unstake } from "./unstake";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { getUserStakingStats } from "@/utils/contracts/handleStaking";
+import { useConfig } from "wagmi";
 
 import { useAuth } from "@/context/authContext";
 
@@ -15,8 +17,26 @@ export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
   const [userWalletBalance, setUserWalletBalance] = useState(0); // This should be fetched from the contract [TODO]
   const [stakedBalance, setStakedBalance] = useState(0); // This should be fetched from the contract [TODO]
+  const config = useConfig();
 
-  console.log(currentUserData);
+  // TODO: Fetch user stats from the contract
+  // TODO: 1. UserWallet balance, 2. Staked balance, 3. APR, 4. Total Staked, 5. Total Users Staking(nice to have if possible)
+  //   useEffect(() => {
+  //     const fetchStakingStats = async () => {
+  //       if (currentUserData.current?.ethereumAddress) {
+  //         const stats = await getUserStakingStats({
+  //           toAddress: currentUserData.current?.ethereumAddress,
+  //           config: config,
+  //         });
+
+  //         console.log(stats);
+
+  //         // setUserWalletBalance(stats.walletBalance);
+  //         // setStakedBalance(stats.stakedBalance);
+  //       }
+  //     };
+  //     fetchStakingStats();
+  //   }, []);
 
   return (
     <DashboardLayout>
@@ -58,6 +78,7 @@ export default function AirdropHunterPage() {
               setUserStakedAmount={setStakedBalance}
               setUserBalance={setUserWalletBalance}
               userStakedAmount={stakedBalance}
+              walletBalance={userWalletBalance}
             />
           </TabsContent>
         </Tabs>

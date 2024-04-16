@@ -2,22 +2,40 @@ import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { handleUnstake } from "@/utils/contracts/handleStaking";
+import { useConfig } from "wagmi";
 
 interface UnstakeProps {
   setUserStakedAmount: (balance: number) => void;
   setUserBalance: (balance: number) => void;
   userStakedAmount: number;
+  walletBalance: number;
 }
 
 export const Unstake = ({
   setUserStakedAmount,
   setUserBalance,
   userStakedAmount,
+  walletBalance,
 }: UnstakeProps) => {
   const [unstakeAmount, setUnstakeAmount] = useState("");
-  const handleUnstake = () => {
-    console.log("Unstake", unstakeAmount);
-    setUnstakeAmount(""); // Reset the input field after unstake
+  const config = useConfig();
+
+  const handleUnstake = async () => {
+    console.log("Unstake button clicked");
+    // Call the unstake function here with unstakeAmount
+    if (unstakeAmount !== "") {
+      const tx = await handleUnstake({
+        amount: Number(unstakeAmount),
+        config: config,
+      });
+
+      if (tx) {
+        // TODO: Update the user staked amount and handle the case if user has already a balance
+        setUserStakedAmount(0);
+        setUserBalance(0);
+      }
+    }
   };
 
   return (

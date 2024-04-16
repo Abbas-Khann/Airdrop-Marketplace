@@ -3,6 +3,9 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { handleStaking } from "@/utils/contracts/handleStaking";
+import { useAccount } from "wagmi";
+import { useConfig } from "wagmi";
 
 interface StakeProps {
   setUserStakedAmount: (balance: number) => void;
@@ -11,23 +14,25 @@ interface StakeProps {
 
 export const Stake = ({ setUserStakedAmount, walletBalance }: StakeProps) => {
   const [stakeAmount, setStakeAmount] = useState("");
-  // const account = useAccount();
+  const account = useAccount();
+  const config = useConfig();
 
   const handleStakeButton = async () => {
     console.log("Stake button clicked");
     // Call the stake function here with stakeAmount
-    // if (stakeAmount !== "" && account.address) {
-    //     const tx = await handleStaking({
-    //         amount: Number(stakeAmount),
-    //         config: useConfig(),
-    //     });
+    if (stakeAmount !== "" && account.address) {
+      const tx = await handleStaking({
+        amount: Number(stakeAmount),
+        config: config,
+      });
 
-    //     if (tx) {
-    //         console.log("Staked successfully");
-    //         setStakeAmount("");
-    //         setUserStakedAmount(Number(stakeAmount));
-    //     }
-    // }
+      if (tx) {
+        // TODO: Update the user staked amount and handle the case if user has already a balance
+        console.log("Staked successfully");
+        setStakeAmount("");
+        setUserStakedAmount(Number(stakeAmount));
+      }
+    }
   };
 
   return (
