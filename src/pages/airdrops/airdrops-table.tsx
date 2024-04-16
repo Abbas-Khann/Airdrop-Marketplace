@@ -99,12 +99,17 @@ interface FavouriteProjects {
 
 export default function AirdropsTable() {
   const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
-  const { currentUserData } = useAuth();
+  const { currentUserData, setHasChanged, hasChanged } = useAuth();
 
-  // TODO: figure out why UserProjects returns an empty array from currentUserData
   const [favouriteProjects, setFavouriteProjects] = useState<
     FavouriteProjects[]
   >([]);
+
+  const isFavourite = (projectId: number) => {
+    return favouriteProjects.some(
+      (project) => project.projectId === projectId && project.isFavourite,
+    );
+  };
 
   const handleAddToFavourites = async ({
     projectId,
@@ -125,8 +130,36 @@ export default function AirdropsTable() {
         ...prev,
         { projectId, isFavourite: true },
       ]);
+      setHasChanged(true);
     } else {
       console.error("Failed to add project to favourites");
+    }
+  };
+
+  // TODO: handle removing from favourites
+  const handleRemoveFromFavourites = async ({
+    projectId,
+  }: {
+    projectId: number;
+  }) => {
+    const userId = currentUserData.current?.id;
+    if (!userId) {
+      return console.error("User is not logged in");
+    }
+    // const response = (await favouriteProject({
+    //   userId,
+    //   projectId,
+    // })) as Response;
+
+    // if (response.ok) {
+    //   setFavouriteProjects((prev) => [
+    //     ...prev,
+    //     { projectId, isFavourite: false },
+    //   ]);
+    //   setHasChanged(true);
+    // }
+    else {
+      console.error("Failed to remove project from favourites");
     }
   };
 
@@ -143,8 +176,6 @@ export default function AirdropsTable() {
       }
     };
 
-    console.log("currentUserData", currentUserData.current);
-
     const initialState = currentUserData.current?.UserProjects?.map(
       (project) => ({
         projectId: project.projectId,
@@ -152,7 +183,6 @@ export default function AirdropsTable() {
       }),
     );
 
-    console.log("initialState", initialState);
     if (initialState) {
       setFavouriteProjects(initialState);
     }
@@ -253,8 +283,17 @@ export default function AirdropsTable() {
                   <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
                     <TableCell className="cursor-pointer rounded-l-xl">
                       <Star
-                        onClick={() =>
-                          handleAddToFavourites({ projectId: project.id })
+                        onClick={
+                          isFavourite(project.id)
+                            ? () =>
+                                handleRemoveFromFavourites({
+                                  projectId: project.id,
+                                })
+                            : () =>
+                                handleAddToFavourites({ projectId: project.id })
+                        }
+                        className={
+                          isFavourite(project.id) ? "text-yellow-400" : ""
                         }
                       />
                     </TableCell>
