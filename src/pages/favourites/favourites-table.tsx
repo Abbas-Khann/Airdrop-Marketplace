@@ -73,7 +73,7 @@ export default function FavouritesTable() {
     <>
       <div className="space-y-6 py-6 md:space-y-12">
         <Typography variant={"h2"} className=" font-raleway">
-          {currentUserData.current?.UserProjects?.length ?? 0} Airdrops
+          {favouriteProjectsData.length ?? 0} Airdrops
         </Typography>
       </div>
       <Table>
@@ -100,7 +100,7 @@ export default function FavouritesTable() {
                 <TableCell className="font-medium">{idx + 1}</TableCell>
                 <TableCell>
                   <Link
-                    href={`/airdrops/${project.name}`}
+                    href={`/airdrops/${project.id}`}
                     className=" flex items-center gap-2"
                   >
                     <Image src={milkyWay} alt={project.name} />
