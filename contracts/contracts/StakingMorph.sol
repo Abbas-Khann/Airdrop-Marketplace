@@ -27,17 +27,10 @@ contract Staking {
     // User address => staked amount
     mapping(address => uint256) public balanceOf;
 
-    constructor(
-        address _stakingToken,
-        address _rewardToken,
-        uint _rewardRate,
-        uint _duration
-    ) {
+    constructor(address _stakingToken, address _rewardToken) {
         owner = msg.sender;
         stakingToken = IERC20(_stakingToken);
         rewardsToken = IERC20(_rewardToken);
-        rewardRate = _rewardRate;
-        duration = _duration;
     }
 
     modifier onlyOwner() {
