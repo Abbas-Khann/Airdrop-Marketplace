@@ -42,6 +42,7 @@ model Project {
   shortDescription String
   about            String
   moreDescription  String?
+  images           String[]
   difficulty       DifficultyType
   category         CategoryType
   likelihood       LikelihoodType

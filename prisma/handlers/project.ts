@@ -27,6 +27,7 @@ export type CreateProjectType = {
   shortDescription: string;
   about: string;
   moreDescription?: string;
+  images?: string[];
   difficulty: string;
   category: string;
   likelihood: string;
@@ -58,6 +59,7 @@ export async function createProject(projectData: CreateProjectType) {
     shortDescription: projectData.shortDescription,
     about: projectData.about,
     moreDescription: projectData.moreDescription,
+    images: projectData.images,
     difficulty: projectData.difficulty as DifficultyType,
     category: projectData.category as CategoryType,
     likelihood: projectData.likelihood as LikelihoodType,

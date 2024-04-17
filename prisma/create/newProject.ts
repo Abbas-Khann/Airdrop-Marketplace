@@ -11,6 +11,7 @@ export type NewProjectProps = {
   shortDescription: string;
   about: string;
   moreDescription?: string;
+  images?: string[];
   difficulty: DifficultyType;
   category: CategoryType;
   likelihood: LikelihoodType;
@@ -25,6 +26,7 @@ export default async function newProject({
   shortDescription,
   about,
   moreDescription,
+  images,
   difficulty,
   category,
   likelihood,
@@ -39,6 +41,7 @@ export default async function newProject({
       shortDescription,
       about,
       moreDescription,
+      images,
       difficulty,
       category,
       likelihood,

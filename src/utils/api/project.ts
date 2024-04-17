@@ -11,6 +11,7 @@ export type ProjectDataType = {
   shortDescription: string;
   about?: string;
   moreDescription?: string;
+  images?: string[];
   difficulty: DifficultyType;
   category: CategoryType;
   likelihood: LikelihoodType;
@@ -82,6 +83,7 @@ export type CreateProjectType = {
   shortDescription: string;
   about: string;
   moreDescription?: string;
+  images?: string[];
   difficulty: DifficultyType;
   category: CategoryType;
   likelihood: LikelihoodType;
