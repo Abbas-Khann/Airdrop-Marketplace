@@ -1,8 +1,7 @@
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
 import { handleMorphTokenMint } from "@/utils/contracts/handleMinting";

@@ -2,7 +2,7 @@ import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { handleGetReward } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Transaction } from ".";
 import { useToast } from "@/components/ui/use-toast";
 import Loader from "@/components/ui/loader";
