@@ -83,7 +83,9 @@ export default function LeaderboardTable() {
                   {level}
                 </TableCell>
               </TableRow>
-              <div className="my-4" />
+              {idx < mockData.length - 1 && (
+                <tr className="spacer" style={{ height: "10px" }}></tr>
+              )}
             </React.Fragment>
           ))}
         </TableBody>

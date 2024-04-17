@@ -89,7 +89,6 @@ export default function FavouritesTable() {
             <TableHead>Networks</TableHead>
           </TableRow>
         </TableHeader>
-        <div className="my-2" />
         <TableBody>
           {favouriteProjectsData.map((project, idx) => (
             <React.Fragment key={idx}>
@@ -149,7 +148,9 @@ export default function FavouritesTable() {
                   </span>
                 </TableCell>
               </TableRow>
-              <div className="my-4" />
+              {idx < favouriteProjectsData.length - 1 && (
+                <tr className="spacer" style={{ height: "10px" }}></tr>
+              )}
             </React.Fragment>
           ))}
         </TableBody>
