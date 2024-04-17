@@ -3,6 +3,8 @@ import DashboardLayout from "@/components/dashboard/layout";
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { NewProjectForm } from "@/components/admin/new-project";
+import { NewTaskForm } from "@/components/admin/new-task";
+import { NewStepForm } from "@/components/admin/new-step";
 
 export default function AdminPanel() {
   const [selectedForm, setSelectedForm] = useState("");
@@ -68,12 +70,8 @@ export default function AdminPanel() {
 
         {selectedForm === "newProject" && <NewProjectForm />}
 
-        {selectedForm === "newTask" && (
-          <div>New Task Form or Component Here</div>
-        )}
-        {selectedForm === "newSteps" && (
-          <div>New Steps Form or Component Here</div>
-        )}
+        {selectedForm === "newTask" && <NewTaskForm />}
+        {selectedForm === "newSteps" && <NewStepForm />}
         {selectedForm === "editProject" && (
           <div>Edit Project Form or Component Here</div>
         )}
