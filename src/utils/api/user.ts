@@ -66,7 +66,7 @@ export async function favouriteProject(data: FavouriteProjectType) {
 }
 
 export type ToggleFavouriteProjectType = {
-  userTaskId: number;
+  userProjectId: number;
   favourite: boolean;
 };
 export async function toggleFavouriteProject(data: ToggleFavouriteProjectType) {

@@ -31,7 +31,7 @@ import { Project, Task } from "@prisma/client";
 import arbitrumLogo from "public/chain-icons/arbitrum.svg";
 import { activeChains } from "@/constants/config/chainsConfig";
 import { useAuth } from "@/context/authContext";
-import { favouriteProject } from "@/utils/api/user";
+import { favouriteProject, toggleFavouriteProject } from "@/utils/api/user";
 
 const difficulty = [
   {
@@ -136,31 +136,46 @@ export default function AirdropsTable() {
     }
   };
 
-  // TODO: handle removing from favourites
   const handleRemoveFromFavourites = async ({
     projectId,
+    favourite,
   }: {
     projectId: number;
+    favourite: boolean;
   }) => {
     const userId = currentUserData.current?.id;
-    if (!userId) {
+
+    const userProjectId = currentUserData.current?.UserProjects?.find(
+      (project) => project.projectId === projectId,
+    )?.id;
+
+    if (!userId || !userProjectId) {
       return console.error("User is not logged in");
     }
-    // const response = (await favouriteProject({
-    //   userId,
-    //   projectId,
-    // })) as Response;
 
-    // if (response.ok) {
-    //   setFavouriteProjects((prev) => [
-    //     ...prev,
-    //     { projectId, isFavourite: false },
-    //   ]);
-    //   setHasChanged(true);
-    // }
-    else {
+    const response = (await toggleFavouriteProject({
+      userProjectId: userProjectId,
+      favourite: favourite,
+    })) as Response;
+
+    if (response.ok) {
+      setFavouriteProjects((prev) =>
+        prev.map((project) =>
+          project.projectId === projectId
+            ? { projectId, isFavourite: favourite }
+            : project,
+        ),
+      );
+      setHasChanged(true);
+    } else {
       console.error("Failed to remove project from favourites");
     }
+  };
+
+  const isInUserProjects = (projectId: number) => {
+    return currentUserData.current?.UserProjects?.some(
+      (project) => project.projectId === projectId,
+    );
   };
 
   useEffect(() => {
@@ -178,6 +193,7 @@ export default function AirdropsTable() {
 
     const initialState = currentUserData.current?.UserProjects?.map(
       (project) => ({
+        userProjectId: project.id,
         projectId: project.projectId,
         isFavourite: project.favourite,
       }),
@@ -284,13 +300,23 @@ export default function AirdropsTable() {
                     <TableCell className="cursor-pointer rounded-l-xl">
                       <Star
                         onClick={
-                          isFavourite(project.id)
+                          !isFavourite(project.id) &&
+                          isInUserProjects(project.id)
                             ? () =>
                                 handleRemoveFromFavourites({
                                   projectId: project.id,
+                                  favourite: true,
                                 })
-                            : () =>
-                                handleAddToFavourites({ projectId: project.id })
+                            : isFavourite(project.id)
+                              ? () =>
+                                  handleRemoveFromFavourites({
+                                    projectId: project.id,
+                                    favourite: false,
+                                  })
+                              : () =>
+                                  handleAddToFavourites({
+                                    projectId: project.id,
+                                  })
                         }
                         className={
                           isFavourite(project.id) ? "text-yellow-400" : ""

@@ -42,15 +42,15 @@ model Project {
   shortDescription String
   about            String
   moreDescription  String?
-  images           String[]
   difficulty       DifficultyType
   category         CategoryType
   likelihood       LikelihoodType
   rating           Float
   featured         Boolean        @default(false)
-  network          Int[] 
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  network          Int[]
+  images           String[]
   links            Link[]
   tasks            Task[]
   UserFavorites    UserProject[]
