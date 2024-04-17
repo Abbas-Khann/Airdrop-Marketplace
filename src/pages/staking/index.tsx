@@ -17,20 +17,17 @@ import { useAuth } from "@/context/authContext";
 
 export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
-  const [userWalletBalance, setUserWalletBalance] = useState(0);
-  const [stakedBalance, setStakedBalance] = useState<number>();
-  const [totalStakedTokens, setTotalStakedTokens] = useState<number>();
-  const [userRewards, setUserRewards] = useState<number>();
+  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const [stakedBalance, setStakedBalance] = useState<number>(0);
+  const [totalStakedTokens, setTotalStakedTokens] = useState<number>(0);
+  const [userRewards, setUserRewards] = useState<number>(0);
   const config = useConfig();
 
   // TODO: add loading feedback / toast to show success or failure
 
   useEffect(() => {
     const fetchStakingStats = async () => {
-      if (
-        currentUserData.current?.ethereumAddress &&
-        stakedBalance == undefined
-      ) {
+      if (currentUserData.current?.ethereumAddress) {
         const stats = await getUserStakingStats({
           toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
           config: config,
@@ -45,6 +42,10 @@ export default function AirdropHunterPage() {
           config: config,
         });
 
+        console.log("stats", stats);
+        console.log("userBalance", userBalance);
+        console.log("stakingContract", stakingContract);
+
         if (userBalance) {
           setUserWalletBalance(Number(userBalance.morphTokenAmount));
         }
@@ -58,8 +59,26 @@ export default function AirdropHunterPage() {
         }
       }
     };
+    console.log("fetching staking stats");
     fetchStakingStats();
   }, []);
+
+  // called after minting and unstaking - updates user wallet balance
+  const handleUserBalance = (amount: number) => {
+    setUserWalletBalance((prev) => prev + amount);
+  };
+
+  // called after staking - updates user staked balance and total staked tokens in the pool
+  const handleStakedBalance = (amount: number) => {
+    setStakedBalance((prev) => prev + amount);
+    setTotalStakedTokens((prev) => prev + amount);
+  };
+
+  // called after unstaking - updates user staked balance and total staked tokens in the pool
+  const handleUnstakedBalance = (amount: number) => {
+    setStakedBalance((prev) => prev - amount);
+    setTotalStakedTokens((prev) => prev - amount);
+  };
 
   return (
     <DashboardLayout>
@@ -89,28 +108,29 @@ export default function AirdropHunterPage() {
             <TabsTrigger value="unstake">Unstake</TabsTrigger>
           </TabsList>
           <TabsContent value="mint">
-            <Mint setUserBalance={setUserWalletBalance} />
+            <Mint handleUserBalance={handleUserBalance} />
           </TabsContent>
           <TabsContent value="stake">
             <Stake
-              setUserStakedAmount={setStakedBalance}
+              handleStakedBalance={handleStakedBalance}
               walletBalance={userWalletBalance}
-              totalStakedTokens={totalStakedTokens || 0}
+              totalStakedTokens={totalStakedTokens}
             />
           </TabsContent>
           <TabsContent value="rewards">
             <Rewards
-              stakedBalance={stakedBalance || 0}
-              userRewards={userRewards || 0}
+              stakedBalance={stakedBalance}
+              userRewards={userRewards}
+              setUserRewardsBalance={setUserRewards}
+              handleUserBalance={handleUserBalance}
             />
           </TabsContent>
 
           <TabsContent value="unstake">
             <Unstake
-              setUserStakedAmount={setStakedBalance}
-              setUserBalance={setUserWalletBalance}
-              userStakedAmount={stakedBalance || 0}
-              walletBalance={userWalletBalance}
+              userStakedAmount={stakedBalance}
+              handleUnstakedBalance={handleUnstakedBalance}
+              handleUserBalance={handleUserBalance}
             />
           </TabsContent>
         </Tabs>

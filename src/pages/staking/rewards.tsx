@@ -6,9 +6,16 @@ import { useConfig } from "wagmi";
 interface RewardsProps {
   stakedBalance: number;
   userRewards: number;
+  setUserRewardsBalance: (balance: number) => void;
+  handleUserBalance: (balance: number) => void;
 }
 
-export const Rewards = ({ stakedBalance, userRewards }: RewardsProps) => {
+export const Rewards = ({
+  stakedBalance,
+  userRewards,
+  setUserRewardsBalance,
+  handleUserBalance,
+}: RewardsProps) => {
   const config = useConfig();
 
   const handleClaimRewardsButton = async () => {
@@ -20,7 +27,9 @@ export const Rewards = ({ stakedBalance, userRewards }: RewardsProps) => {
     });
 
     if (tx) {
-      // TODO: update states
+      // TODO: toast feedback
+      handleUserBalance(userRewards);
+      setUserRewardsBalance(0);
     }
   };
 

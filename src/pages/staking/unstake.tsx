@@ -6,24 +6,21 @@ import { handleUnstake } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
 
 interface UnstakeProps {
-  setUserStakedAmount: (balance: number) => void;
-  setUserBalance: (balance: number) => void;
   userStakedAmount: number;
-  walletBalance: number;
+  handleUnstakedBalance: (balance: number) => void;
+  handleUserBalance: (balance: number) => void;
 }
 
 export const Unstake = ({
-  setUserStakedAmount,
-  setUserBalance,
+  handleUserBalance,
+  handleUnstakedBalance,
+
   userStakedAmount,
-  walletBalance,
 }: UnstakeProps) => {
   const [unstakeAmount, setUnstakeAmount] = useState("");
   const config = useConfig();
 
   const _handleUnstake = async () => {
-    console.log("Unstake button clicked");
-    // Call the unstake function here with unstakeAmount
     if (unstakeAmount !== "") {
       const tx = await handleUnstake({
         amount: Number(unstakeAmount),
@@ -31,9 +28,10 @@ export const Unstake = ({
       });
 
       if (tx) {
-        // TODO: Update the user staked amount and handle the case if user has already a balance
-        setUserStakedAmount(0);
-        setUserBalance(0);
+        // TODO: toast feedback
+        handleUserBalance(Number(unstakeAmount));
+        handleUnstakedBalance(Number(unstakeAmount));
+        setUnstakeAmount("");
       }
     }
   };

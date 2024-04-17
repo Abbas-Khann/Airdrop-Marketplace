@@ -1,5 +1,4 @@
 import { Typography } from "@/components/ui/typography";
-import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -8,13 +7,13 @@ import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
 
 interface StakeProps {
-  setUserStakedAmount: (balance: number) => void;
+  handleStakedBalance: (balance: number) => void;
   walletBalance: number;
   totalStakedTokens: number;
 }
 
 export const Stake = ({
-  setUserStakedAmount,
+  handleStakedBalance,
   walletBalance,
   totalStakedTokens,
 }: StakeProps) => {
@@ -32,10 +31,10 @@ export const Stake = ({
       });
 
       if (tx) {
-        // TODO: Update the user staked amount and handle the case if user has already a balance
+        // TODO: Toast feedback
         console.log("Staked successfully");
         setStakeAmount("");
-        setUserStakedAmount(Number(stakeAmount));
+        handleStakedBalance(Number(stakeAmount));
       }
     }
   };

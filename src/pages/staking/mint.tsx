@@ -8,10 +8,10 @@ import { useConfig } from "wagmi";
 import { handleMorphTokenMint } from "@/utils/contracts/handleMinting";
 
 interface MintProps {
-  setUserBalance: (balance: number) => void;
+  handleUserBalance: (balance: number) => void;
 }
 
-export const Mint = ({ setUserBalance }: MintProps) => {
+export const Mint = ({ handleUserBalance }: MintProps) => {
   const [mintAmount, setMintAmount] = useState("");
   const account = useAccount();
   const config = useConfig();
@@ -25,10 +25,9 @@ export const Mint = ({ setUserBalance }: MintProps) => {
       });
 
       if (tx) {
-        // TODO: Update the user wallet balance and handle the case if user has already a balance
-        console.log("Minted successfully");
+        // TODO: toast feedback
         setMintAmount("");
-        setUserBalance(Number(mintAmount));
+        handleUserBalance(Number(mintAmount));
       }
     }
   };
