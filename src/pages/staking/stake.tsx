@@ -10,9 +10,14 @@ import { useConfig } from "wagmi";
 interface StakeProps {
   setUserStakedAmount: (balance: number) => void;
   walletBalance: number;
+  totalStakedTokens: number;
 }
 
-export const Stake = ({ setUserStakedAmount, walletBalance }: StakeProps) => {
+export const Stake = ({
+  setUserStakedAmount,
+  walletBalance,
+  totalStakedTokens,
+}: StakeProps) => {
   const [stakeAmount, setStakeAmount] = useState("");
   const account = useAccount();
   const config = useConfig();
@@ -43,9 +48,13 @@ export const Stake = ({ setUserStakedAmount, walletBalance }: StakeProps) => {
         required amount through our staking interface to gain instant access.
       </Typography>
 
+      <Typography variant="lead" className="pt-4">
+        Staking Pool balance: {totalStakedTokens.toFixed(2)} $mMPH
+      </Typography>
+
       <div className="flex items-center justify-between">
         <Typography variant="inlineCode" className="pt-4">
-          Your Balance: {walletBalance}
+          Wallet Balance: {walletBalance.toFixed(2)} $mMPH
         </Typography>
         <Typography variant="inlineCode" className="pt-4">
           Current APR: 13%

@@ -46,7 +46,7 @@ export const Unstake = ({
       </Typography>
       <div className="flex items-center justify-between">
         <Typography variant="inlineCode" className="pt-4">
-          Staked Balance: {userStakedAmount}
+          Staked Balance: {userStakedAmount} $mMPH
         </Typography>
         <Typography variant="inlineCode" className="pt-4">
           Current APR: 13%

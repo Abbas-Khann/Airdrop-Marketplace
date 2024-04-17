@@ -1,26 +1,30 @@
 import DashboardLayout from "@/components/dashboard/layout";
-import AirdropsSignup from "./airdrop-signup";
 import { Typography } from "@/components/ui/typography";
 import { Mint } from "./mint";
 import { Stake } from "./stake";
 import { Unstake } from "./unstake";
-import { Button } from "@/components/ui/button";
+import { Rewards } from "./rewards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
+import {
+  getMorphTokenBalance,
+  getTotalStakedAmount,
+} from "@/utils/contracts/handleToken";
 
 import { useAuth } from "@/context/authContext";
 
 export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
-  const [userWalletBalance, setUserWalletBalance] = useState(0); // This should be fetched from the contract [TODO]
-  const [stakedBalance, setStakedBalance] = useState<number>(); // This should be fetched from the contract [TODO]
+  const [userWalletBalance, setUserWalletBalance] = useState(0);
+  const [stakedBalance, setStakedBalance] = useState<number>();
+  const [totalStakedTokens, setTotalStakedTokens] = useState<number>();
+  const [userRewards, setUserRewards] = useState<number>();
   const config = useConfig();
 
-  // TODO: Fetch user stats from the contract
-  // TODO: 1. UserWallet balance, 2. Staked balance, 3. APR, 4. Total Staked, 5. Total Users Staking(nice to have if possible)
+  // TODO: add loading feedback / toast to show success or failure
+
   useEffect(() => {
     const fetchStakingStats = async () => {
       if (
@@ -32,18 +36,28 @@ export default function AirdropHunterPage() {
           config: config,
         });
 
-        console.log(stats);
+        const userBalance = await getMorphTokenBalance({
+          toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
+          config: config,
+        });
+
+        const stakingContract = await getTotalStakedAmount({
+          config: config,
+        });
+
+        if (userBalance) {
+          setUserWalletBalance(Number(userBalance.morphTokenAmount));
+        }
+        if (stakingContract) {
+          setTotalStakedTokens(Number(stakingContract.totalStakedAmount));
+        }
         if (stats) {
           // setUserWalletBalance(stats.walletBalance);
           setStakedBalance(Number(stats.stakedAmount));
+          setUserRewards(Number(stats.rewardAmount));
         }
       }
     };
-
-    // For total Amount Staked , getTotalStakedAmount
-    // For user wallet balance for Morph , getMorphTokenBalance
-    // For total user staked , not possible at this point
-
     fetchStakingStats();
   }, []);
 
@@ -71,6 +85,7 @@ export default function AirdropHunterPage() {
           <TabsList className="border-1 w-full">
             <TabsTrigger value="mint">Mint</TabsTrigger>
             <TabsTrigger value="stake">Stake</TabsTrigger>
+            <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="unstake">Unstake</TabsTrigger>
           </TabsList>
           <TabsContent value="mint">
@@ -80,13 +95,21 @@ export default function AirdropHunterPage() {
             <Stake
               setUserStakedAmount={setStakedBalance}
               walletBalance={userWalletBalance}
+              totalStakedTokens={totalStakedTokens || 0}
             />
           </TabsContent>
+          <TabsContent value="rewards">
+            <Rewards
+              stakedBalance={stakedBalance || 0}
+              userRewards={userRewards || 0}
+            />
+          </TabsContent>
+
           <TabsContent value="unstake">
             <Unstake
               setUserStakedAmount={setStakedBalance}
               setUserBalance={setUserWalletBalance}
-              userStakedAmount={stakedBalance}
+              userStakedAmount={stakedBalance || 0}
               walletBalance={userWalletBalance}
             />
           </TabsContent>
