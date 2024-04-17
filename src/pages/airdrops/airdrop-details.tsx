@@ -8,9 +8,10 @@ import { useRouter } from "next/router";
 import DashboardCard from "@/components/dashboard/dashboard-card";
 import Link from "next/link";
 import { ProjectDataType } from "@/utils/api/project";
-import { getAboutProtocol } from "@/utils/get/aboutProtocol";
-import { getLinksProtocol } from "@/utils/get/linksProtocol";
+import { getAboutProtocol } from "@/utils/helpers/aboutProtocol";
+import { getLinksProtocol } from "@/utils/helpers/linksProtocol";
 import Loader from "@/components/ui/loader";
+import { useAuth } from "@/context/authContext";
 
 interface AboutProps {
   title: string;
@@ -26,6 +27,15 @@ export default function AirdropDetails({ projectData }: ProjectDataProps) {
   const router = useRouter();
   const aboutProtocol = getAboutProtocol(projectData);
   const links = getLinksProtocol(projectData);
+  const { currentUserData } = useAuth();
+
+  const userFavouriteProjects = currentUserData.current?.UserProjects;
+  const currentProjectId = projectData.id;
+
+  const isFavourite = userFavouriteProjects?.some(
+    (project) =>
+      project.projectId === currentProjectId && project.favourite === true,
+  );
 
   return (
     <>
@@ -52,7 +62,9 @@ export default function AirdropDetails({ projectData }: ProjectDataProps) {
                 </div>
               </div>
               <div className="cursor-pointer">
-                <Star className="h-5 w-5" />
+                <Star
+                  className={`h-5 w-5 ${isFavourite ? "text-yellow-400" : ""}`}
+                />
               </div>
             </div>
 
