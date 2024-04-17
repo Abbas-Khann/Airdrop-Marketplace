@@ -14,6 +14,8 @@ import type { AppProps } from "next/app";
 import type { Session } from "next-auth";
 import { wagmiConfig, theme } from "@/constants/config/wagmiConfig";
 import React from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { ToastProvider } from "@radix-ui/react-toast";
 
 import { AuthContextProvider } from "@/context/authContext";
 
@@ -44,7 +46,10 @@ function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
                   // enableSystem={true}
                 >
                   <AuthContextProvider>
-                    <Component {...pageProps} />
+                    <ToastProvider>
+                      <Toaster />
+                      <Component {...pageProps} />
+                    </ToastProvider>
                   </AuthContextProvider>
                 </ThemeProvider>
               </RainbowKitProvider>

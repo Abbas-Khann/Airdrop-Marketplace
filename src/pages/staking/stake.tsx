@@ -5,11 +5,19 @@ import { useState } from "react";
 import { handleStaking } from "@/utils/contracts/handleStaking";
 import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
+import Loader from "@/components/ui/loader";
+import { useToast } from "@/components/ui/use-toast";
+import { Transaction } from ".";
 
 interface StakeProps {
   handleStakedBalance: (balance: number) => void;
   walletBalance: number;
   totalStakedTokens: number;
+}
+
+interface StakingTransaction {
+  approvetransaction: Transaction;
+  staketransaction: Transaction;
 }
 
 export const Stake = ({
@@ -18,23 +26,43 @@ export const Stake = ({
   totalStakedTokens,
 }: StakeProps) => {
   const [stakeAmount, setStakeAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const account = useAccount();
   const config = useConfig();
+  const { toast } = useToast();
 
   const handleStakeButton = async () => {
-    console.log("Stake button clicked");
-    // Call the stake function here with stakeAmount
     if (stakeAmount !== "" && account.address) {
-      const tx = await handleStaking({
-        amount: Number(stakeAmount),
-        config: config,
-      });
+      try {
+        setIsLoading(true);
+        const tx = (await handleStaking({
+          amount: Number(stakeAmount),
+          config: config,
+        })) as StakingTransaction;
 
-      if (tx) {
-        // TODO: Toast feedback
-        console.log("Staked successfully");
-        setStakeAmount("");
-        handleStakedBalance(Number(stakeAmount));
+        if (
+          tx.approvetransaction.transactionHash &&
+          tx.staketransaction.transactionHash
+        ) {
+          toast({
+            title: "Staked successfully",
+            description: `Staked ${stakeAmount} tokens`,
+            variant: "success",
+          });
+          setStakeAmount("");
+          handleStakedBalance(Number(stakeAmount));
+          return setIsLoading(false);
+        }
+
+        toast({
+          title: "Error staking tokens",
+          description: "Please try again",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error staking tokens", error);
+        setIsLoading(false);
       }
     }
   };
@@ -65,8 +93,12 @@ export const Stake = ({
         onChange={(e) => setStakeAmount(e.target.value)}
         className="rounded-xl bg-[#E9E9E9] text-black dark:bg-white/30"
       />
-      <Button variant={"outline"} onClick={handleStakeButton}>
-        Stake Tokens
+      <Button
+        variant={"outline"}
+        onClick={handleStakeButton}
+        disabled={stakeAmount == "" || isLoading || stakeAmount == "0"}
+      >
+        {isLoading ? <Loader className="h-8 w-8" /> : "Stake"}
       </Button>
     </div>
   );

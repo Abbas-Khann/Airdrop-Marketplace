@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { handleUnstake } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
+import { useToast } from "@/components/ui/use-toast";
+import { Transaction } from ".";
+import Loader from "@/components/ui/loader";
 
 interface UnstakeProps {
   userStakedAmount: number;
@@ -18,20 +21,40 @@ export const Unstake = ({
   userStakedAmount,
 }: UnstakeProps) => {
   const [unstakeAmount, setUnstakeAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const config = useConfig();
+  const { toast } = useToast();
 
-  const _handleUnstake = async () => {
+  const handleUnstakeButton = async () => {
     if (unstakeAmount !== "") {
-      const tx = await handleUnstake({
-        amount: Number(unstakeAmount),
-        config: config,
-      });
+      try {
+        setIsLoading(true);
+        const tx = (await handleUnstake({
+          amount: Number(unstakeAmount),
+          config: config,
+        })) as Transaction;
 
-      if (tx) {
-        // TODO: toast feedback
-        handleUserBalance(Number(unstakeAmount));
-        handleUnstakedBalance(Number(unstakeAmount));
-        setUnstakeAmount("");
+        if (tx.transactionHash) {
+          toast({
+            title: "Unstaked successfully",
+            description: `Unstaked ${unstakeAmount} tokens`,
+            variant: "success",
+          });
+          handleUserBalance(Number(unstakeAmount));
+          handleUnstakedBalance(Number(unstakeAmount));
+          setUnstakeAmount("");
+          return setIsLoading(false);
+        }
+
+        toast({
+          title: "Error unstaking tokens",
+          description: "Please try again",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error unstaking tokens", error);
+        setIsLoading(false);
       }
     }
   };
@@ -58,8 +81,12 @@ export const Unstake = ({
         className="rounded-xl bg-[#E9E9E9] text-black dark:bg-white/30"
       />
 
-      <Button variant={"outline"} onClick={_handleUnstake}>
-        Unstake Tokens
+      <Button
+        variant={"outline"}
+        onClick={handleUnstakeButton}
+        disabled={unstakeAmount == "" || isLoading || unstakeAmount == "0"}
+      >
+        {isLoading ? <Loader className="h-8 w-8" /> : "Unstake"}
       </Button>
     </div>
   );

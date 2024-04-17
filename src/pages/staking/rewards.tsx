@@ -2,6 +2,10 @@ import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { handleGetReward } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
+import { useEffect, useState } from "react";
+import { Transaction } from ".";
+import { useToast } from "@/components/ui/use-toast";
+import Loader from "@/components/ui/loader";
 
 interface RewardsProps {
   stakedBalance: number;
@@ -17,19 +21,40 @@ export const Rewards = ({
   handleUserBalance,
 }: RewardsProps) => {
   const config = useConfig();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClaimRewardsButton = async () => {
-    console.log("Claim rewards button clicked");
-    // Call the claim rewards function here
-    const tx = await handleGetReward({
-      amount: userRewards,
-      config: config,
-    });
+    try {
+      setIsLoading(true);
+      const tx = (await handleGetReward({
+        amount: userRewards,
+        config: config,
+      })) as Transaction;
 
-    if (tx) {
-      // TODO: toast feedback
-      handleUserBalance(userRewards);
-      setUserRewardsBalance(0);
+      console.log("tx", tx);
+      if (tx.transactionHash) {
+        // TODO: toast feedback
+        toast({
+          title: "Rewards claimed successfully",
+          description: `Claimed ${userRewards} tokens`,
+          variant: "success",
+        });
+        handleUserBalance(userRewards);
+        setUserRewardsBalance(0);
+        return setIsLoading(false);
+      }
+
+      toast({
+        title: "Error claiming rewards",
+        description: "Please try again",
+        variant: "destructive",
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error claiming rewards", error);
+      setIsLoading(false);
     }
   };
 
@@ -49,8 +74,12 @@ export const Rewards = ({
           Your Stake: {stakedBalance.toFixed(2)} $mMPH
         </Typography>
       </div>
-      <Button variant={"outline"} onClick={handleClaimRewardsButton}>
-        Claim Rewards
+      <Button
+        variant={"outline"}
+        onClick={handleClaimRewardsButton}
+        disabled={userRewards == 0 || isLoading}
+      >
+        {isLoading ? <Loader className="h-8 w-8" /> : "Claim Rewards"}
       </Button>
     </div>
   );

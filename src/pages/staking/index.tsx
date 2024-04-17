@@ -15,6 +15,12 @@ import {
 
 import { useAuth } from "@/context/authContext";
 
+export interface Transaction {
+  transactionHash: string;
+  from: string;
+  status: string;
+}
+
 export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
@@ -22,8 +28,6 @@ export default function AirdropHunterPage() {
   const [totalStakedTokens, setTotalStakedTokens] = useState<number>(0);
   const [userRewards, setUserRewards] = useState<number>(0);
   const config = useConfig();
-
-  // TODO: add loading feedback / toast to show success or failure
 
   useEffect(() => {
     const fetchStakingStats = async () => {
@@ -42,10 +46,6 @@ export default function AirdropHunterPage() {
           config: config,
         });
 
-        console.log("stats", stats);
-        console.log("userBalance", userBalance);
-        console.log("stakingContract", stakingContract);
-
         if (userBalance) {
           setUserWalletBalance(Number(userBalance.morphTokenAmount));
         }
@@ -59,9 +59,8 @@ export default function AirdropHunterPage() {
         }
       }
     };
-    console.log("fetching staking stats");
     fetchStakingStats();
-  }, []);
+  }, [currentUserData]);
 
   // called after minting and unstaking - updates user wallet balance
   const handleUserBalance = (amount: number) => {
@@ -72,6 +71,7 @@ export default function AirdropHunterPage() {
   const handleStakedBalance = (amount: number) => {
     setStakedBalance((prev) => prev + amount);
     setTotalStakedTokens((prev) => prev + amount);
+    setUserWalletBalance((prev) => prev - amount);
   };
 
   // called after unstaking - updates user staked balance and total staked tokens in the pool
@@ -96,7 +96,6 @@ export default function AirdropHunterPage() {
           <Typography variant="h3">2. Stake Your Tokens</Typography>
           <Typography variant="h3">3. Access Airdrop Hunter</Typography>
         </div> */}
-
         <Tabs
           defaultValue="stake"
           className="bg-gradient items-start rounded-xl lg:mx-auto lg:w-9/12"

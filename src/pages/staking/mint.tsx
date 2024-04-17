@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
 import { handleMorphTokenMint } from "@/utils/contracts/handleMinting";
+import Loader from "@/components/ui/loader";
+import { Transaction } from ".";
+import { useToast } from "@/components/ui/use-toast";
 
 interface MintProps {
   handleUserBalance: (balance: number) => void;
@@ -13,21 +16,41 @@ interface MintProps {
 
 export const Mint = ({ handleUserBalance }: MintProps) => {
   const [mintAmount, setMintAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const account = useAccount();
   const config = useConfig();
+  const { toast } = useToast();
 
   const handleMintButton = async () => {
     if (mintAmount !== "" && account.address) {
-      const tx = await handleMorphTokenMint({
-        toAddress: account.address,
-        amount: Number(mintAmount),
-        config: config,
-      });
+      setIsLoading(true);
+      try {
+        const tx = (await handleMorphTokenMint({
+          toAddress: account.address,
+          amount: Number(mintAmount),
+          config: config,
+        })) as Transaction;
+        if (tx.transactionHash) {
+          toast({
+            title: "Minted successfully",
+            description: `Minted ${mintAmount} tokens`,
+            variant: "success",
+          });
+          setMintAmount("");
+          handleUserBalance(Number(mintAmount));
+          setIsLoading(false);
+          return;
+        }
 
-      if (tx) {
-        // TODO: toast feedback
-        setMintAmount("");
-        handleUserBalance(Number(mintAmount));
+        toast({
+          title: "Error minting tokens",
+          description: "Please try again",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error minting tokens", error);
+        setIsLoading(false);
       }
     }
   };
@@ -44,8 +67,12 @@ export const Mint = ({ handleUserBalance }: MintProps) => {
         onChange={(e) => setMintAmount(e.target.value)}
         className="rounded-xl bg-[#E9E9E9] text-black dark:bg-white/30"
       />
-      <Button variant={"outline"} onClick={handleMintButton}>
-        Mint Tokens
+      <Button
+        variant={"outline"}
+        onClick={handleMintButton}
+        disabled={mintAmount == "" || isLoading || mintAmount == "0"}
+      >
+        {isLoading ? <Loader className="h-8 w-8" /> : "Mint"}
       </Button>
     </div>
   );
