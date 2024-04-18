@@ -160,7 +160,21 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
       {Object.keys(projectData).length !== 0 ? (
         <div className="space-y-8">
           <div className="space-y-4">
-            <Image src={banner} alt="banner" className=" w-full" />
+            {/* <Image
+              src={projectData.images ? banner : projectData.images[1]}
+              alt="banner"
+              className=" w-full"
+              width={400}
+              height={200}
+            /> */}
+
+            <Image
+              src={projectData.images ? projectData.images[1] : banner}
+              alt="banner"
+              className=" w-full rounded-xl"
+              width={400}
+              height={200}
+            />
             <DashboardCard className="flex w-full items-center justify-between p-5">
               <Typography variant={"smallTitle"}>
                 {totalTasksCompletedByUser}/{tasks?.length} Tasks completed

@@ -32,6 +32,7 @@ export const getAllProjects = async () => {
       rating: true,
       featured: true,
       network: true,
+      images: true,
       tasks: {
         select: {
           id: true,

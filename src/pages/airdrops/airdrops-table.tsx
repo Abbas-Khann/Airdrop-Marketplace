@@ -22,13 +22,11 @@ import {
 } from "@/components/ui/select";
 import Loader from "@/components/ui/loader";
 import { ShieldX } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
 import { Typography } from "@/components/ui/typography";
 import { getProjects } from "@/utils/api/getProjects";
 import { Project, Task } from "@prisma/client";
-import arbitrumLogo from "public/chain-icons/arbitrum.svg";
 import { activeChains } from "@/constants/config/chainsConfig";
 import { useAuth } from "@/context/authContext";
 import { favouriteProject, toggleFavouriteProject } from "@/utils/api/user";
@@ -330,7 +328,13 @@ export default function AirdropsTable() {
                         className="flex items-center gap-2"
                       >
                         {/* TODO: how do we get the project logo?  */}
-                        <Image src={arbitrumLogo} alt={project.name} />
+                        <Image
+                          src={project.images[0] || milkyWay}
+                          alt={project.name}
+                          width={28}
+                          height={28}
+                          className="rounded-xl"
+                        />
                         <span className="block space-y-0">
                           <Typography variant={"large"}>
                             {project.name}
