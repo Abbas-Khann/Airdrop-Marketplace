@@ -7,6 +7,7 @@ import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { HeaderSheet } from "./header-sheet";
 import { ConnectWalletButton } from "../ui/connect-button";
+import { useAuth } from "@/context/authContext";
 
 interface NavLinks {
   label: string;
@@ -58,6 +59,7 @@ export function Header() {
 }
 
 export function NavLinks() {
+  const { isAdmin } = useAuth();
   return (
     <>
       <Link
@@ -66,6 +68,14 @@ export function NavLinks() {
       >
         Airdrop Marketplace
       </Link>
+      {isAdmin && (
+        <Link
+          href={"/admin"}
+          className={cn(buttonVariants({ variant: "navbar" }))}
+        >
+          Admin
+        </Link>
+      )}
     </>
   );
 }

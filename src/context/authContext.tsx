@@ -13,6 +13,7 @@ interface AuthContextProps {
   currentUserData: React.MutableRefObject<UserData | undefined>;
   currentUser: `0x${string}` | undefined;
   authorized: boolean;
+  isAdmin: boolean;
   setHasChanged: (value: boolean) => void;
   hasChanged: boolean;
 }
@@ -47,8 +48,12 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // the user Data can be accessed globally from any state
   useEffect(() => {
     setCurrentUser(address);
-    // console.log(address);
+    console.log(address);
     if (address && !currentUserData.current) {
+      if (admins.includes(address)) {
+        console.log("Admin Acessed allowed");
+        setIsAdmin(true);
+      }
       getData();
     }
   }, [address]);
@@ -110,24 +115,21 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setAuthorized(true);
       }
 
-      if (adminPaths.includes(router.pathname)) {
-        console.log(currentUser);
-        if (!currentUser) {
-          console.log("User not available");
-          // If the wallet is not connected and the user tries to access then push to home page and sak to connect
-          void router.push({
-            pathname: "/",
-          });
-          return;
-        }
-        console.log("Admin Path accessed");
+      if (adminPaths.includes(router.pathname) && !isAdmin) {
+        // console.log(currentUser);
+        // if (!currentUser) {
+        //   console.log("User not available");
+        //   // If the wallet is not connected and the user tries to access then push to home page and sak to connect
+        //   void router.push({
+        //     pathname: "/",
+        //   });
+        //   return;
+        // }
 
-        if (admins.includes(currentUser)) {
-          console.log("Admin Acessed allowed");
-          setIsAdmin(true);
-        }
-      } else {
-        setIsAdmin(false);
+        console.log("Admin Path accessed");
+        void router.push({
+          pathname: "/",
+        });
       }
     };
 
@@ -150,6 +152,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     authorized,
     setHasChanged,
     hasChanged,
+    isAdmin,
   };
 
   return (

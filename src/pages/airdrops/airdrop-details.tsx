@@ -53,7 +53,12 @@ export default function AirdropDetails({ projectData }: ProjectDataProps) {
 
             <div className="flex w-full items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <Image src={milkyway} alt="protocol" />
+                <Image
+                  src={projectData.images ? projectData.images[0] : milkyway}
+                  alt="protocol"
+                  width={100}
+                  height={100}
+                />
                 <div>
                   <Typography variant={"h2"}>{projectData?.name}</Typography>
                   <Typography variant={"muted"}>
