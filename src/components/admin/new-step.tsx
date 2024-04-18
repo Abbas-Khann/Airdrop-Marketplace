@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
 import { z } from "zod";
-import { DifficultyType } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,46 +12,93 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Typography } from "../ui/typography";
+import React, { useEffect, useState } from "react";
+import { createSteps } from "@/utils/api/task";
+import { getProjects } from "@/utils/api/getProjects";
+import { Project, Task } from "@prisma/client";
+import { useToast } from "../ui/use-toast";
 
-import React from "react";
-
-const tasks = [
-  { id: 1, name: "Task A" },
-  { id: 2, name: "Task B" },
-  { id: 3, name: "Task C" },
-];
-
-const projects = [
-  { id: 1, name: "Project A" },
-  { id: 2, name: "Project B" },
-  { id: 3, name: "Project C" },
-];
+interface ProjectWithTask extends Project {
+  tasks: Task[];
+}
 
 const stepFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(20, "Description must be at least 20 characters"),
   taskId: z.number(),
+  projectId: z.number(),
 });
 
 export const NewStepForm = () => {
+  const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
+  const [projectTasks, setProjectTasks] = useState<Task[]>([]);
+  const { toast } = useToast();
+
   const form = useForm({
     resolver: zodResolver(stepFormSchema),
     defaultValues: {
       name: "",
       description: "",
-      taskId: tasks[0]?.id || 1,
+      taskId: projectTasks[0]?.id || 1,
+      projectId: projectData[0]?.id || 1,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof stepFormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof stepFormSchema>) => {
+    const response = (await createSteps({
+      taskId: values.taskId,
+      name: values.name,
+      description: values.description,
+    })) as Response;
 
-    // TODO: Add logic to submit the form data to the backend
+    if (response.ok) {
+      toast({
+        title: "Step created successfully",
+        description: "The step has been added to the task.",
+        variant: "success",
+      });
+      form.reset();
+    } else {
+      toast({
+        title: "Failed to create step",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
+
+  const selectedProjectId = form.watch("projectId");
 
   function setFormValue<T>(field: keyof typeof stepFormSchema.shape, value: T) {
     form.setValue(field, value as any);
   }
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response && Array.isArray(response)) {
+          setProjectData(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+        setProjectData([]);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (projectData.length) {
+      const project = projectData.find(
+        (project) => project.id === selectedProjectId,
+      );
+      if (project) {
+        setProjectTasks(project.tasks);
+      }
+    }
+  }, [projectData, selectedProjectId]);
 
   return (
     <Form {...form}>
@@ -73,14 +119,14 @@ export const NewStepForm = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant={"outline"}>
-                {form.watch("taskId") || "Select Difficulty"}
+                {form.watch("projectId") || "Select Difficulty"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {Object.values(projects).map(({ id, name }) => (
+              {Object.values(projectData).map(({ id, name }) => (
                 <DropdownMenuItem
                   key={String(id)}
-                  onSelect={() => setFormValue("taskId", id)}
+                  onSelect={() => setFormValue("projectId", id)}
                 >
                   {name}
                 </DropdownMenuItem>
@@ -97,7 +143,7 @@ export const NewStepForm = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {Object.values(tasks).map(({ id, name }) => (
+              {projectTasks.map(({ id, name }) => (
                 <DropdownMenuItem
                   key={String(id)}
                   onSelect={() => setFormValue("taskId", id)}
@@ -129,7 +175,7 @@ export const NewStepForm = () => {
           {errors.description && <p>{errors.description.message}</p>}
         </FormItem> */}
 
-        <Button type="submit">Submit Step</Button>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );

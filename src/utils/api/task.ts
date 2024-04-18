@@ -42,7 +42,7 @@ export async function createSteps(stepData: CreateStepType) {
   let error;
 
   try {
-    response = await fetch("/api/step", {
+    response = await fetch("/api/steps", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

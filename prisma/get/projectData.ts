@@ -35,6 +35,7 @@ export const getAllProjects = async () => {
       tasks: {
         select: {
           id: true,
+          name: true,
         },
       },
     },
