@@ -6,7 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "../ui/button";
 import { z } from "zod";
-import { DifficultyType, CategoryType, LikelihoodType } from "@prisma/client";
+import {
+  DifficultyType,
+  CategoryType,
+  LikelihoodType,
+  Link,
+} from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +21,10 @@ import {
 import { useRef } from "react";
 import { storeFile } from "../../../firebase/methods";
 import { Typography } from "../ui/typography";
+import { createProject } from "@/utils/api/project";
+import { LinkType } from "@prisma/client";
+import { useToast } from "../ui/use-toast";
+import { CreateProjectType } from "@/utils/api/project";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -28,15 +37,53 @@ const formSchema = z.object({
   rating: z.number().min(0).max(5),
   featured: z.boolean(),
   network: z.array(z.number()),
+  links: z.array(
+    z.object({
+      url: z.string().url(),
+      type: z.nativeEnum(LinkType),
+    }),
+  ),
   mainImage: z.string(),
   bannerImage: z.string(),
 });
 
 export const NewProjectForm = () => {
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const { toast } = useToast();
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
-    // TODO: Add logic to submit the form data to the backend
+    const projectData: CreateProjectType = {
+      name: values.name,
+      shortDescription: values.shortDescription,
+      about: values.about,
+      moreDescription: values.moreDescription,
+      difficulty: values.difficulty,
+      category: values.category,
+      likelihood: values.likelihood,
+      rating: values.rating,
+      featured: values.featured,
+      network: values.network,
+      links: values.links,
+      images: [values.mainImage, values.bannerImage],
+    };
+
+    const response = (await createProject(projectData)) as Response;
+
+    if (response.ok) {
+      toast({
+        title: "Project created",
+        description: "The project has been created successfully",
+        variant: "success",
+      });
+      form.reset();
+    } else {
+      toast({
+        title: "Error",
+        description: "There was an error creating the project",
+        variant: "destructive",
+      });
+    }
   };
 
   const form = useForm({
@@ -52,6 +99,7 @@ export const NewProjectForm = () => {
       rating: 5,
       featured: false,
       network: [],
+      links: [{ url: "", type: LinkType.WEBSITE }],
       mainImage: "",
       bannerImage: "",
     },
@@ -106,7 +154,6 @@ export const NewProjectForm = () => {
           <FormLabel>More Description</FormLabel>
           <Textarea {...form.register("moreDescription")} />
         </FormItem>
-
         <div className="flex items-center justify-between">
           <FormItem className="flex flex-col">
             <FormLabel>Difficulty</FormLabel>
@@ -169,7 +216,6 @@ export const NewProjectForm = () => {
             </DropdownMenu>
           </FormItem>
         </div>
-
         <FormItem>
           <FormLabel>Rating</FormLabel>
           <Input
@@ -178,6 +224,48 @@ export const NewProjectForm = () => {
               setValueAs: (value) => (value === "" ? undefined : Number(value)),
             })}
           />
+        </FormItem>
+        <FormItem>
+          <FormLabel>Links</FormLabel>
+          {form.watch("links").map((link, index) => (
+            <div key={index} className="flex items-center gap-4">
+              <Input
+                type="url"
+                placeholder="URL"
+                {...form.register(`links.${index}.url`)}
+              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {form.watch(`links.${index}.type`) || "Select Type"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {Object.values(LinkType).map((value) => (
+                    <DropdownMenuItem
+                      key={value}
+                      onSelect={() =>
+                        // @ts-ignore
+                        form.setValue(`links.${index}.type`, value as LinkType)
+                      }
+                    >
+                      {value}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ))}
+          <Button
+            onClick={() =>
+              form.setValue("links", [
+                ...form.getValues("links"),
+                { url: "", type: LinkType.WEBSITE },
+              ])
+            }
+          >
+            Add Link
+          </Button>
         </FormItem>
         <FormItem className="flex items-center justify-start gap-4 p-0">
           <FormLabel>Featured </FormLabel>
@@ -199,7 +287,6 @@ export const NewProjectForm = () => {
             })}
           />
         </FormItem>
-
         <FormItem>
           <FormLabel>Main Image (Project Logo)</FormLabel>
           <Input
