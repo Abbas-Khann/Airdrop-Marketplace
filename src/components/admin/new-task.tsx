@@ -13,18 +13,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Typography } from "../ui/typography";
+import { getProjects } from "@/utils/api/getProjects";
+import { Project, Task } from "@prisma/client";
+import React, { useState, useEffect } from "react";
+import { createTasks } from "@/utils/api/task";
+import { useToast } from "../ui/use-toast";
 
-import React from "react";
+interface ProjectWithTask extends Project {
+  tasks: Task[];
+}
 
-const projects = [
-  { id: 1, name: "Project A" },
-  { id: 2, name: "Project B" },
-  { id: 3, name: "Project C" },
-];
-
-// Zod schema based on Task model
 const taskFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  taskName: z.string().min(2, "Name must be at least 2 characters"),
   difficulty: z.nativeEnum(DifficultyType),
   about: z.string().min(20, "About must be at least 20 characters"),
   instructions: z
@@ -34,21 +34,61 @@ const taskFormSchema = z.object({
 });
 
 export const NewTaskForm = () => {
+  const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response && Array.isArray(response)) {
+          setProjectData(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+        setProjectData([]);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const form = useForm({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      name: "",
+      taskName: "",
       difficulty: DifficultyType.EASY,
       about: "",
       instructions: "",
-      projectId: projects[0]?.id || 1,
+      projectId: projectData[0]?.id || 1,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof taskFormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof taskFormSchema>) => {
+    const response = (await createTasks({
+      projectId: values.projectId,
+      taskName: values.taskName,
+      difficulty: values.difficulty,
+      about: values.about,
+      instructions: values.instructions,
+      steps: [],
+    })) as Response;
 
-    // TODO: Add logic to submit the form data to the backend
+    if (response.ok) {
+      toast({
+        title: "Task created",
+        description: "Task created successfully",
+        variant: "success",
+      });
+      form.reset();
+      return;
+    } else {
+      toast({
+        title: "Error creating task",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
   };
 
   function setFormValue<T>(field: keyof typeof taskFormSchema.shape, value: T) {
@@ -69,17 +109,36 @@ export const NewTaskForm = () => {
             task to the project.
           </Typography>
         </FormLabel>
-        {/*  // TODO: Change this to a dropdown menu */}
+        <FormItem className="flex flex-col">
+          <FormLabel>Project ID</FormLabel>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"outline"}>
+                {form.watch("projectId") || "Select Difficulty"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {Object.values(projectData).map(({ id, name }) => (
+                <DropdownMenuItem
+                  key={String(id)}
+                  onSelect={() => setFormValue("projectId", id)}
+                >
+                  {name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </FormItem>
         <FormItem>
-          <FormLabel>Project Name</FormLabel>
-          <Input {...form.register("name")} />
+          <FormLabel>Task Name</FormLabel>
+          <Input {...form.register("taskName")} />
         </FormItem>
         <FormItem>
           <FormLabel>About</FormLabel>
           <Textarea {...form.register("about")} />
         </FormItem>
         <FormItem>
-          <FormLabel>Instructions</FormLabel>
+          <FormLabel>Instructions (Requirements)</FormLabel>
           <Textarea {...form.register("instructions")} />
         </FormItem>
 

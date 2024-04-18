@@ -20,7 +20,7 @@ export async function createTasks(taskData: CreateTaskType) {
   let error;
 
   try {
-    response = await fetch("/api/task", {
+    response = await fetch("/api/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
