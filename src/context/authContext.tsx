@@ -1,7 +1,7 @@
 import React, { ReactNode, createContext } from "react";
 import { useContext, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { privatePaths } from "../constants/privatePaths";
+import { adminPaths, admins, privatePaths } from "../constants/privatePaths";
 import { UserData, getUserData } from "@/utils/api/user";
 import { useAccount, useConfig } from "wagmi";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
@@ -34,6 +34,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [hasChanged, setHasChanged] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   async function getData() {
     const user = await getUserData();
@@ -45,11 +46,12 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // get the user data if the user address is connected and the data is not yet fetched
   // the user Data can be accessed globally from any state
   useEffect(() => {
+    setCurrentUser(address);
+    // console.log(address);
     if (address && !currentUserData.current) {
-      setCurrentUser(address);
       getData();
     }
-  }, [router.pathname, address]);
+  }, [address]);
 
   useEffect(() => {
     if (hasChanged) {
@@ -62,43 +64,70 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const authCheck = async () => {
       if (privatePaths.includes(router.pathname)) {
         if (!currentUser) {
+          console.log("User not available");
           // If the wallet is not connected and the user tries to access then push to home page and sak to connect
-          // void router.push({
-          //   pathname: "/",
-          // });
+          void router.push({
+            pathname: "/",
+          });
           return;
         }
 
         console.log("Private Path accessed");
 
         // // Add a check and see if the User has staked yet or not
-        // const stakeInfo = await getUserStakingStats({
-        //   toAddress: currentUser,
-        //   config: config,
-        // });
+        const stakeInfo = await getUserStakingStats({
+          toAddress: currentUser,
+          config: config,
+        });
 
-        // console.log(stakeInfo);
-        // if (stakeInfo) {
-        //   const { stakedAmount } = stakeInfo;
-        //   const hasStaked = Number(stakedAmount) > 0 ? true : false;
-        //   console.log("Access Allowed");
-        //   setAuthorized(hasStaked);
-        //   if (!hasStaked) {
-        //     // void router.push({
-        //     //   pathname: "/stake",
-        //     // });
-        //   }
-        // } else {
-        //   console.log("Access Restricted");
-        //   setAuthorized(false);
-        //   // dispatch(setRedirectLink({ goto: router.asPath }));
-        //   // void router.push({
-        //   //   pathname: "/stake",
-        //   // });
-        // }
-        setAuthorized(true);
+        console.log(stakeInfo);
+        if (stakeInfo) {
+          const { stakedAmount } = stakeInfo;
+          const hasStaked = Number(stakedAmount) > 0 ? true : false;
+
+          setAuthorized(hasStaked);
+          if (!hasStaked) {
+            console.log("Not Staked");
+            console.log("Access Restricted");
+            setAuthorized(false);
+            void router.push({
+              pathname: "/staking",
+            });
+          } else {
+            console.log("Access Allowed");
+            setAuthorized(true);
+          }
+        } else {
+          console.log("Access Restricted");
+          setAuthorized(false);
+          // dispatch(setRedirectLink({ goto: router.asPath }));
+          void router.push({
+            pathname: "/staking",
+          });
+        }
+        // setAuthorized(true);
       } else {
         setAuthorized(true);
+      }
+
+      if (adminPaths.includes(router.pathname)) {
+        console.log(currentUser);
+        if (!currentUser) {
+          console.log("User not available");
+          // If the wallet is not connected and the user tries to access then push to home page and sak to connect
+          void router.push({
+            pathname: "/",
+          });
+          return;
+        }
+        console.log("Admin Path accessed");
+
+        if (admins.includes(currentUser)) {
+          console.log("Admin Acessed allowed");
+          setIsAdmin(true);
+        }
+      } else {
+        setIsAdmin(false);
       }
     };
 
@@ -113,7 +142,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       router.events.off("routeChangeStart", preventAccess);
       router.events.off("routeChangeComplete", authCheck);
     };
-  }, [router]);
+  }, [router, address]);
 
   const value = {
     currentUser,

@@ -7,7 +7,7 @@ import { Rewards } from "./rewards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
-import { useConfig } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import {
   getMorphTokenBalance,
   getTotalStakedAmount,
@@ -23,6 +23,7 @@ export interface Transaction {
 
 export default function AirdropHunterPage() {
   const { currentUserData } = useAuth();
+  const { address } = useAccount();
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [stakedBalance, setStakedBalance] = useState<number>(0);
   const [totalStakedTokens, setTotalStakedTokens] = useState<number>(0);
@@ -60,7 +61,7 @@ export default function AirdropHunterPage() {
       }
     };
     fetchStakingStats();
-  }, [currentUserData]);
+  }, [currentUserData, address]);
 
   // called after minting and unstaking - updates user wallet balance
   const handleUserBalance = (amount: number) => {
