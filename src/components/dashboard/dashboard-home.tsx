@@ -30,7 +30,7 @@ export default function DashboardHome() {
             key={idx}
             className="relative w-full cursor-pointer rounded-2xl transition-all ease-in-out hover:scale-[1.015] hover:shadow-md md:col-span-3 md:w-5/12"
           >
-            <Link href={item.link}>
+            <Link href={item.link} target="_blank">
               <div className="absolute flex h-full flex-col items-start justify-between p-4 text-white">
                 <Typography
                   variant={"large"}

@@ -49,8 +49,10 @@ export function Footer({ isDashboard }: FooterProps) {
             " font-light tracking-wide md:max-w-xl ",
           )}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Discover seamless integration across diverse blockchains with
+          Etherway. Effortlessly mint and bridge NFTs and tokens using the
+          latest cross-chain technology. Your gateway to simplified cross-chain
+          transactions.
         </Typography>
       </div>
       {!isDashboard && (
@@ -77,20 +79,20 @@ export function Footer({ isDashboard }: FooterProps) {
       )}
       {isDashboard && (
         <div className=" grid w-full grid-cols-6 gap-3 md:max-w-md [&>*]:col-span-3 md:[&>*]:col-span-2 lg:[&>*]:col-span-3 ">
-          <Link href={""} target="_blank">
-            <Button variant={"etherwaySecondary"} className="w-full">
+          <Link href={"https://discord.gg/GcS5r5NWfh"} target="_blank">
+            <Button variant={"dashboardFooter"} className="w-full">
               <DiscordIcon className="mx-2 h-4 w-4" />
               Discord
             </Button>
           </Link>
 
-          <Link href={""} target="_blank">
-            <Button variant={"etherwaySecondary"} className="w-full">
+          <Link href={"https://twitter.com/etherway_io"} target="_blank">
+            <Button variant={"dashboardFooter"} className="w-full">
               <XIcon className="mx-2 h-4 w-4" /> Twitter
             </Button>
           </Link>
-          <Link href={""} target="_blank">
-            <Button variant={"etherwaySecondary"} className="w-full">
+          <Link href={"https://t.me/+IFXADMbhrSAyNTE0"} target="_blank">
+            <Button variant={"dashboardFooter"} className="w-full">
               <TelegramIcon className="mx-2 h-4 w-4" />
               Telegram
             </Button>
