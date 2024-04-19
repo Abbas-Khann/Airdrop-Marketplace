@@ -97,8 +97,10 @@ interface FavouriteProjects {
 
 export default function AirdropsTable() {
   const [projectData, setProjectData] = useState<ProjectWithTask[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<ProjectWithTask[]>(
+    [],
+  );
   const { currentUserData, setHasChanged, hasChanged } = useAuth();
-
   const [favouriteProjects, setFavouriteProjects] = useState<
     FavouriteProjects[]
   >([]);
@@ -176,12 +178,25 @@ export default function AirdropsTable() {
     );
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const search = e.target.value;
+    if (search.trim() === "") {
+      setFilteredProjects(projectData);
+    } else {
+      const filtered = projectData.filter((project) =>
+        project.name.toLowerCase().includes(search.toLowerCase()),
+      );
+      setFilteredProjects(filtered);
+    }
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await getProjects();
         if (response && Array.isArray(response)) {
           setProjectData(response);
+          setFilteredProjects(response);
         }
       } catch (error) {
         console.error("Failed to fetch projects:", error);
@@ -272,7 +287,8 @@ export default function AirdropsTable() {
                 <Input
                   type="text"
                   placeholder="Search..."
-                  className="rounded-xl bg-[#E9E9E9] pl-10 pr-28 text-black dark:bg-white/30"
+                  className="rounded-xl bg-[#E9E9E9] pl-10 pr-28 dark:bg-white/30 dark:text-white"
+                  onChange={handleSearch}
                 />
                 <Search className="absolute left-3 top-3 h-4 w-4" />
               </div>
@@ -292,7 +308,7 @@ export default function AirdropsTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projectData.map((project, idx) => (
+              {filteredProjects.map((project, idx) => (
                 <React.Fragment key={idx}>
                   <TableRow className="z-10 rounded-xl border-0 bg-[#b5b4b6]/30 px-8 py-7 backdrop-blur-md hover:bg-[#b5b4b6]/20 dark:bg-white/10 dark:text-white">
                     <TableCell className="cursor-pointer rounded-l-xl">
@@ -327,7 +343,6 @@ export default function AirdropsTable() {
                         href={`/airdrops/${project.id}`}
                         className="flex items-center gap-2"
                       >
-                        {/* TODO: how do we get the project logo?  */}
                         <Image
                           src={project.images[0] || milkyWay}
                           alt={project.name}
