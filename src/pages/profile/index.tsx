@@ -11,20 +11,18 @@ import profileDark from "@/assets/dashboard/profile-dark.svg";
 import { useAccount } from "wagmi";
 import { useAuth } from "@/context/authContext";
 import { format } from "date-fns";
+import { getUserStakingStats } from "@/utils/contracts/handleStaking";
+import { useEffect, useState } from "react";
+import { useConfig } from "wagmi";
 
 export default function ProfilePage() {
   const { address } = useAccount();
   const { currentUserData, authorized } = useAuth();
-
-  console.log(authorized);
+  const config = useConfig();
+  const [userRewards, setUserRewards] = useState<number>(0);
 
   const user = currentUserData?.current;
-
-  console.log(user);
-
-  const userTasks = user?.UserTasks?.length;
   const walletAddress = user?.ethereumAddress;
-  const userRewards = user?.UserRewards;
   const formatDate = (date: Date) => format(new Date(date), "PPP");
   const completedTasks =
     user?.UserTasks?.filter((task) => task.completed).length || 0;
@@ -32,23 +30,26 @@ export default function ProfilePage() {
   const favouriteProjects =
     user?.UserProjects?.filter((project) => project.favourite).length || 0;
   const inviteCode = user?.inviteCode;
-  const earnedRewards = userRewards?.reduce(
-    (acc, reward) => acc + reward.points,
-    0,
-  );
 
-  console.log(userTasks);
+  useEffect(() => {
+    const fetchStakingStats = async () => {
+      const stats = await getUserStakingStats({
+        toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
+        config: config,
+      });
 
-  // if (!isLoggedIn) we display a message to log in
-  // if (isLoading) we display a loading indicator
-  // if (user) we display the user data
+      if (stats) {
+        setUserRewards(Number(stats.rewardAmount));
+      }
+    };
+
+    if (authorized) {
+      fetchStakingStats();
+    }
+  }, [authorized]);
 
   return (
     <DashboardLayout>
-      {/* {isLoggedIn && <div>{user?.address}</div>}
-      {isLoading && <div>Loading...</div>}
-      {!isLoggedIn && address && <div>Not logged in</div>} */}
-
       {currentUserData.current ? (
         <div className="space-y-6 px-1 py-2 md:space-y-12 md:px-0 md:py-6">
           <Typography variant={"h2"} className=" font-raleway">
@@ -89,7 +90,7 @@ export default function ProfilePage() {
             completedTasks={completedTasks}
             totalInteractions={totalInteractions}
             favouriteProjects={favouriteProjects}
-            earnedRewards={earnedRewards || 0}
+            earnedRewards={userRewards || 0}
             inviteCode={inviteCode || "Invite code not available"}
           />
         </div>
@@ -120,6 +121,11 @@ const AccountDetails = ({
   earnedRewards: number;
   inviteCode: string;
 }) => {
+  const handleCopyButton = () => {
+    const url = `etherway.io/${inviteCode}`;
+    navigator.clipboard.writeText(url);
+  };
+
   return (
     <div className="grid grid-cols-2">
       {/* space-y-10 ^^
@@ -158,14 +164,18 @@ const AccountDetails = ({
           <div className="flex items-center gap-4">
             <Input
               placeholder="**************"
-              value={inviteCode}
+              value={`etherway.io/${inviteCode}`}
               disabled
               className="w-full border border-neutral-200 md:w-fit"
             />
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant={"secondary"} className="w-full md:w-fit">
+          <Button
+            variant={"secondary"}
+            className="w-full md:w-fit"
+            onClick={handleCopyButton}
+          >
             Copy
           </Button>
         </div>
@@ -176,16 +186,16 @@ const AccountDetails = ({
           <div className="flex flex-col gap-2">
             <Typography
               variant={"smallTitle"}
-            >{`Total tasks completed: ${completedTasks}`}</Typography>
+            >{`Earned rewards: ${earnedRewards.toFixed(3)} $rMPH`}</Typography>
             <Typography
               variant={"smallTitle"}
-            >{`Total interactions: ${totalInteractions}`}</Typography>
+            >{`Total tasks completed: ${completedTasks}`}</Typography>
             <Typography
               variant={"smallTitle"}
             >{`Favourite projects: ${favouriteProjects}`}</Typography>
             <Typography
               variant={"smallTitle"}
-            >{`Earned rewards: ${earnedRewards}`}</Typography>
+            >{`Total interactions: ${totalInteractions}`}</Typography>
           </div>
         </div>
       </div>
