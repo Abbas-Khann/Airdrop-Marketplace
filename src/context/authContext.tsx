@@ -48,7 +48,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // the user Data can be accessed globally from any state
   useEffect(() => {
     setCurrentUser(address);
-    console.log(address);
+    // console.log(address);
     if (address && !currentUserData.current) {
       if (admins.includes(address)) {
         console.log("Admin Acessed allowed");
