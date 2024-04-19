@@ -12,6 +12,8 @@ import { getAboutProtocol } from "@/utils/helpers/aboutProtocol";
 import { getLinksProtocol } from "@/utils/helpers/linksProtocol";
 import Loader from "@/components/ui/loader";
 import { useAuth } from "@/context/authContext";
+import { favouriteProject, toggleFavouriteProject } from "@/utils/api/user";
+import { useEffect, useState } from "react";
 
 interface AboutProps {
   title: string;
@@ -23,19 +25,105 @@ interface ProjectDataProps {
   projectData: ProjectDataType;
 }
 
+interface FavouriteProjects {
+  projectId: number;
+  favourite: boolean;
+}
+
 export default function AirdropDetails({ projectData }: ProjectDataProps) {
   const router = useRouter();
   const aboutProtocol = getAboutProtocol(projectData);
   const links = getLinksProtocol(projectData);
-  const { currentUserData } = useAuth();
+  const { currentUserData, setHasChanged } = useAuth();
+  const [userFavouriteProjects, setUserFavouriteProjects] = useState<
+    FavouriteProjects[]
+  >([]);
 
-  const userFavouriteProjects = currentUserData.current?.UserProjects;
+  // const userFavouriteProjects = currentUserData.current?.UserProjects;
   const currentProjectId = projectData.id;
 
   const isFavourite = userFavouriteProjects?.some(
     (project) =>
       project.projectId === currentProjectId && project.favourite === true,
   );
+
+  const handleAddToFavourites = async ({
+    projectId,
+  }: {
+    projectId: number;
+  }) => {
+    const userId = currentUserData.current?.id;
+    if (!userId) {
+      return console.error("User is not logged in");
+    }
+    const response = (await favouriteProject({
+      userId,
+      projectId,
+    })) as Response;
+
+    if (response.ok) {
+      setUserFavouriteProjects((prev) => [
+        ...prev,
+        { projectId: projectId, favourite: true },
+      ]);
+      setHasChanged(true);
+    } else {
+      console.error("Failed to add project to favourites");
+    }
+  };
+
+  const handleRemoveFromFavourites = async ({
+    projectId,
+    favourite,
+  }: {
+    projectId: number;
+    favourite: boolean;
+  }) => {
+    const userId = currentUserData.current?.id;
+
+    const userProjectId = currentUserData.current?.UserProjects?.find(
+      (project) => project.projectId === projectId,
+    )?.id;
+
+    if (!userId || !userProjectId) {
+      return console.error("User is not logged in");
+    }
+
+    const response = (await toggleFavouriteProject({
+      userProjectId: userProjectId,
+      favourite: favourite,
+    })) as Response;
+
+    if (response.ok) {
+      // if favourite is false, remove project from favourites
+      if (!favourite) {
+        setUserFavouriteProjects((prev) =>
+          prev.filter((project) => project.projectId !== projectId),
+        );
+      } else {
+        setUserFavouriteProjects((prev) =>
+          prev.map((project) =>
+            project.projectId === projectId
+              ? { projectId: projectId, favourite: true }
+              : project,
+          ),
+        );
+      }
+      setHasChanged(true);
+    } else {
+      console.error("Failed to remove project from favourites");
+    }
+  };
+
+  const isInUserProjects = (projectId: number) => {
+    return currentUserData.current?.UserProjects?.some(
+      (project) => project.projectId === projectId,
+    );
+  };
+
+  useEffect(() => {
+    setUserFavouriteProjects(currentUserData.current?.UserProjects || []);
+  }, [currentUserData.current?.UserProjects]);
 
   return (
     <>
@@ -69,6 +157,24 @@ export default function AirdropDetails({ projectData }: ProjectDataProps) {
               <div className="cursor-pointer">
                 <Star
                   className={`h-5 w-5 ${isFavourite ? "text-yellow-400" : ""}`}
+                  onClick={
+                    isFavourite && isInUserProjects(currentProjectId)
+                      ? () =>
+                          handleRemoveFromFavourites({
+                            projectId: currentProjectId,
+                            favourite: false,
+                          })
+                      : !isFavourite && isInUserProjects(currentProjectId)
+                        ? () =>
+                            handleRemoveFromFavourites({
+                              projectId: currentProjectId,
+                              favourite: true,
+                            })
+                        : () =>
+                            handleAddToFavourites({
+                              projectId: currentProjectId,
+                            })
+                  }
                 />
               </div>
             </div>
