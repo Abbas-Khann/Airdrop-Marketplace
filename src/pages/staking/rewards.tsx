@@ -68,7 +68,7 @@ export const Rewards = ({
       </Typography>
       <div className="flex items-center justify-between">
         <Typography variant="inlineCode" className="pt-4">
-          Earned rewards: {userRewards.toFixed(5)} $mMPH
+          Earned rewards: {userRewards.toFixed(5)} $rMPH
         </Typography>
         <Typography variant="inlineCode" className="pt-4">
           Your Stake: {stakedBalance.toFixed(2)} $mMPH
