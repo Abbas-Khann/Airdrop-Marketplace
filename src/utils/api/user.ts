@@ -147,7 +147,6 @@ export async function getUserData(): Promise<UserData | undefined> {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
     if (response.status == 200) {
       const data = (await response.json()) as UserData;
       return data;

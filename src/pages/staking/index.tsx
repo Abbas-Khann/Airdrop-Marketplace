@@ -31,8 +31,6 @@ export default function AirdropHunterPage() {
   const config = useConfig();
   const {} = useConnect();
 
-  console.log(currentUserData);
-
   useEffect(() => {
     const fetchStakingStats = async () => {
       if (address) {
