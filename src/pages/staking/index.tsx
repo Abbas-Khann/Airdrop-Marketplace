@@ -1,13 +1,13 @@
 import DashboardLayout from "@/components/dashboard/layout";
 import { Typography } from "@/components/ui/typography";
-import { Mint } from "./mint";
-import { Stake } from "./stake";
-import { Unstake } from "./unstake";
-import { Rewards } from "./rewards";
+import { Mint } from "../../components/staking/mint";
+import { Stake } from "../../components/staking/stake";
+import { Unstake } from "../../components/staking/unstake";
+import { Rewards } from "../../components/staking/rewards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
-import { useAccount, useConfig } from "wagmi";
+import { useAccount, useConfig, useConnect } from "wagmi";
 import {
   getMorphTokenBalance,
   getTotalStakedAmount,
@@ -29,6 +29,7 @@ export default function AirdropHunterPage() {
   const [totalStakedTokens, setTotalStakedTokens] = useState<number>(0);
   const [userRewards, setUserRewards] = useState<number>(0);
   const config = useConfig();
+  const {} = useConnect();
 
   useEffect(() => {
     const fetchStakingStats = async () => {

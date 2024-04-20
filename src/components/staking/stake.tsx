@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
 import Loader from "@/components/ui/loader";
 import { useToast } from "@/components/ui/use-toast";
-import { Transaction } from ".";
+import { Transaction } from "../../pages/staking";
 
 interface StakeProps {
   handleStakedBalance: (balance: number) => void;
@@ -103,3 +103,5 @@ export const Stake = ({
     </div>
   );
 };
+
+export default Stake;

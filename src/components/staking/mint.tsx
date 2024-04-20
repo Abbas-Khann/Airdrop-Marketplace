@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { useConfig } from "wagmi";
 import { handleMorphTokenMint } from "@/utils/contracts/handleMinting";
 import Loader from "@/components/ui/loader";
-import { Transaction } from ".";
+import { Transaction } from "../../pages/staking";
 import { useToast } from "@/components/ui/use-toast";
 
 interface MintProps {
@@ -58,7 +58,8 @@ export const Mint = ({ handleUserBalance }: MintProps) => {
       <Typography variant="large">Mint Morph Token</Typography>
       <Typography variant="smallTitle">
         Begin your journey by securing Morph tokens. For our testnet phase,
-        we're excited to offer a convenient way for you to mint initial tokens.
+        we&apos;re excited to offer a convenient way for you to mint initial
+        tokens.
       </Typography>
       <Input
         placeholder="Amount to mint"
@@ -76,3 +77,5 @@ export const Mint = ({ handleUserBalance }: MintProps) => {
     </div>
   );
 };
+
+export default Mint;

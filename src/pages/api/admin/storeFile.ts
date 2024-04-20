@@ -3,10 +3,7 @@ import { getServerSession } from "next-auth";
 import { getAuthOptions } from "../auth/[...nextauth]";
 import { InteractionType } from "@prisma/client";
 import { getCsrfToken } from "next-auth/react";
-import {
-  FavouriteProjectType,
-  favouriteProject,
-} from "prisma/handlers/project";
+import { FavouriteProjectType } from "prisma/handlers/project";
 import formidable from "formidable";
 
 const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS;

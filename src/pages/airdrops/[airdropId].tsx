@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import AirdropDetails from "./airdrop-details";
-import QuestsDetails from "./quests-details";
+import AirdropDetails from "../../components/airdrops/airdrop-details";
+import QuestsDetails from "../../components/airdrops/quests-details";
 import DashboardLayout from "@/components/dashboard/layout";
 import dynamic from "next/dynamic";
 import { getProject } from "@/utils/api/project";

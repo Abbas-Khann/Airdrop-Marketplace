@@ -5,7 +5,7 @@ import { useState } from "react";
 import { handleUnstake } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
 import { useToast } from "@/components/ui/use-toast";
-import { Transaction } from ".";
+import { Transaction } from "../../pages/staking";
 import Loader from "@/components/ui/loader";
 
 interface UnstakeProps {
@@ -91,3 +91,5 @@ export const Unstake = ({
     </div>
   );
 };
+
+export default Unstake;

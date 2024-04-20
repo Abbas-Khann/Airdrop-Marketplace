@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { handleGetReward } from "@/utils/contracts/handleStaking";
 import { useConfig } from "wagmi";
 import { useState } from "react";
-import { Transaction } from ".";
+import { Transaction } from "../../pages/staking";
 import { useToast } from "@/components/ui/use-toast";
 import Loader from "@/components/ui/loader";
 
@@ -84,3 +84,5 @@ export const Rewards = ({
     </div>
   );
 };
+
+export default Rewards;

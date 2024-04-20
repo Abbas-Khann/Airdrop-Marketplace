@@ -1,5 +1,5 @@
 import DashboardLayout from "@/components/dashboard/layout";
-import AirdropsTable from "./airdrops-table";
+import AirdropsTable from "../../components/airdrops/airdrops-table";
 
 export default function AirdropHunterPage() {
   return (
