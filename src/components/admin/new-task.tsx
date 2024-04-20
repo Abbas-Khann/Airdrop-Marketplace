@@ -27,9 +27,7 @@ const taskFormSchema = z.object({
   taskName: z.string().min(2, "Name must be at least 2 characters"),
   difficulty: z.nativeEnum(DifficultyType),
   about: z.string().min(20, "About must be at least 20 characters"),
-  instructions: z
-    .string()
-    .min(20, "Instructions must be at least 20 characters"),
+  instructions: z.string().min(5, "Instructions must be at least 5 characters"),
   projectId: z.number(),
 });
 
