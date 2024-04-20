@@ -5,6 +5,7 @@ import { adminPaths, admins, privatePaths } from "../constants/privatePaths";
 import { UserData, getUserData } from "@/utils/api/user";
 import { useAccount, useConfig } from "wagmi";
 import { getUserStakingStats } from "@/utils/contracts/handleStaking";
+import { useSession } from "next-auth/react";
 
 // import "react-toastify/dist/ReactToastify.css";
 // import en from "../public/en.svg";
@@ -27,6 +28,8 @@ export const useAuth = () => {
 };
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+  const { data: session, status } = useSession();
+
   const [currentUser, setCurrentUser] = useState<`0x${string}` | undefined>();
   const currentUserData = useRef<UserData | undefined>(undefined);
   const router = useRouter();
@@ -39,6 +42,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   async function getData() {
     const user = await getUserData();
+    // console.log(user);
     if (user) {
       currentUserData.current = user;
     }
@@ -49,7 +53,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setCurrentUser(address);
     // console.log(address);
-    if (address && !currentUserData.current) {
+    if (address && !currentUserData.current && session) {
       if (admins.includes(address)) {
         console.log("Admin Acessed allowed");
         setIsAdmin(true);
@@ -60,7 +64,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       setCurrentUser(undefined);
       currentUserData.current = undefined;
     }
-  }, [address]);
+  }, [address, session]);
 
   useEffect(() => {
     if (hasChanged) {
@@ -109,27 +113,16 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         } else {
           console.log("Access Restricted");
           setAuthorized(false);
-          // dispatch(setRedirectLink({ goto: router.asPath }));
+
           void router.push({
             pathname: "/staking",
           });
         }
-        // setAuthorized(true);
       } else {
         setAuthorized(true);
       }
 
       if (adminPaths.includes(router.pathname) && !isAdmin) {
-        // console.log(currentUser);
-        // if (!currentUser) {
-        //   console.log("User not available");
-        //   // If the wallet is not connected and the user tries to access then push to home page and sak to connect
-        //   void router.push({
-        //     pathname: "/",
-        //   });
-        //   return;
-        // }
-
         console.log("Admin Path accessed");
         void router.push({
           pathname: "/",

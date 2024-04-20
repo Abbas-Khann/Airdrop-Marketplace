@@ -147,9 +147,12 @@ export async function getUserData(): Promise<UserData | undefined> {
         "Content-Type": "application/json",
       },
     });
-
-    const data = (await response.json()) as UserData;
-    return data;
+    console.log(response);
+    if (response.status == 200) {
+      const data = (await response.json()) as UserData;
+      return data;
+    }
+    return;
   } catch (e) {
     console.log(e);
     const error = e;

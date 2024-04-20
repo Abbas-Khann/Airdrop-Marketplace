@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const [userRewards, setUserRewards] = useState<number>(0);
 
   const user = currentUserData?.current;
-  const walletAddress = user?.ethereumAddress;
+  const walletAddress = address;
   const formatDate = (date: Date) => format(new Date(date), "PPP");
   const completedTasks =
     user?.UserTasks?.filter((task) => task.completed).length || 0;
@@ -31,10 +31,12 @@ export default function ProfilePage() {
     user?.UserProjects?.filter((project) => project.favourite).length || 0;
   const inviteCode = user?.inviteCode;
 
+  // console.log(currentUserData.current);
+
   useEffect(() => {
     const fetchStakingStats = async () => {
       const stats = await getUserStakingStats({
-        toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
+        toAddress: address as `0x${string}`,
         config: config,
       });
 
@@ -43,10 +45,10 @@ export default function ProfilePage() {
       }
     };
 
-    if (authorized) {
+    if (authorized && address) {
       fetchStakingStats();
     }
-  }, [authorized]);
+  }, [authorized, address]);
 
   return (
     <DashboardLayout>

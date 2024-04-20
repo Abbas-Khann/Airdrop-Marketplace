@@ -31,16 +31,18 @@ export default function AirdropHunterPage() {
   const config = useConfig();
   const {} = useConnect();
 
+  console.log(currentUserData);
+
   useEffect(() => {
     const fetchStakingStats = async () => {
-      if (currentUserData.current?.ethereumAddress) {
+      if (address) {
         const stats = await getUserStakingStats({
-          toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
+          toAddress: address as `0x${string}`,
           config: config,
         });
 
         const userBalance = await getMorphTokenBalance({
-          toAddress: currentUserData.current?.ethereumAddress as `0x${string}`,
+          toAddress: address as `0x${string}`,
           config: config,
         });
 
@@ -62,7 +64,7 @@ export default function AirdropHunterPage() {
       }
     };
     fetchStakingStats();
-  }, [currentUserData.current, address]);
+  }, [address]);
 
   // called after minting and unstaking - updates user wallet balance
   const handleUserBalance = (amount: number) => {
