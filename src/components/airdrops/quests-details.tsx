@@ -191,7 +191,7 @@ export default function QuestsDetails({ projectData }: ProjectDataProps) {
                 key={idx}
                 type="single"
                 collapsible
-                className=" md:max-w-md"
+                className=" min-w-full md:max-w-md"
               >
                 <AccordionItem value="title">
                   <AccordionTrigger
