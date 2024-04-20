@@ -56,6 +56,10 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
       getData();
     }
+    if (address == undefined) {
+      setCurrentUser(undefined);
+      currentUserData.current = undefined;
+    }
   }, [address]);
 
   useEffect(() => {

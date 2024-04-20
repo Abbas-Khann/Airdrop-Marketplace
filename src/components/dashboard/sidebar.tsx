@@ -11,6 +11,7 @@ import {
   UserCircle,
   Zap,
   Shrub,
+  ShieldCheck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { Typography } from "../ui/typography";
 import { buttonVariants } from "../ui/button";
 import { Separator } from "../ui/separator";
 import React from "react";
+import { useAuth } from "@/context/authContext";
 
 interface Links {
   title: string;
@@ -62,7 +64,7 @@ const links: Links[] = [
 
 export function DashboardSidebar() {
   const path = usePathname() || "";
-
+  const { isAdmin } = useAuth();
   return (
     <div className="group flex min-h-screen flex-col items-center gap-4  bg-[#F6F6F6] py-4 dark:border-neutral-700 dark:bg-[#110E14] md:w-[90px] md:border-r lg:w-[280px] 2xl:w-[320px]">
       <div className=" block self-start px-6 md:hidden lg:block lg:px-10">
@@ -111,6 +113,28 @@ export function DashboardSidebar() {
               {index < links.length - 1 && <Separator />}
             </React.Fragment>
           ))}
+          {isAdmin && (
+            <React.Fragment>
+              <Link
+                href={"/admin"}
+                className={cn(
+                  `
+                  ${buttonVariants({
+                    variant: path.startsWith("/admin") ? "navbar" : "ghost",
+                  })}
+                  "dark:bg-muted flex items-center justify-start gap-2 self-start dark:text-white lg:w-full`,
+                )}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                <Typography
+                  variant={"smallTitle"}
+                  className="text-sm2xl:text-base md:hidden lg:block"
+                >
+                  Admin
+                </Typography>
+              </Link>
+            </React.Fragment>
+          )}
         </div>
       </div>
     </div>

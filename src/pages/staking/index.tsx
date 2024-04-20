@@ -61,7 +61,7 @@ export default function AirdropHunterPage() {
       }
     };
     fetchStakingStats();
-  }, [currentUserData, address]);
+  }, [currentUserData.current, address]);
 
   // called after minting and unstaking - updates user wallet balance
   const handleUserBalance = (amount: number) => {
