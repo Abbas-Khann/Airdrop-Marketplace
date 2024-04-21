@@ -1,29 +1,47 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+# 🥳 Airdrop Marketplace by Etherway
 
-## What's next? How do I make an app with this?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+[![Screenshot 2024-04-21 at 12 54 32 PM](https://github.com/CJskii/Airdrop-Marketplace/assets/78753275/6e054728-facf-4821-8c6c-36032ae39a48)
+](https://www.youtube.com/watch?v=Fw86xH3fjNw)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+*Click on the Image above to view the video on YouTube*
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
 
-## Learn More
+[Load Website](https://airdrop.etherway.io/dashboard)
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## 🤷‍♀️ Question Time
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+### 👨‍🔬 What is this and what was this built for?
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Airdrop Marketplace is a product built by the etherway team to build a single hub for airdrop farmers and degens to access all the up and coming airdrops while earning due to it's unique staking mechanism with the native staking pools by the Morph blockchain.
 
-## How do I deploy this?
+## 🤔 Why Etherway's Airdrop Marketplace ?
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+3 main reasons: 
+- No Fiat payments required like other providers
+- Get access via Staking into Morph
+- Earn while using the product
+
+## 👊 Team
+
+Abbas Khann
+
+Dhruv Agarwal
+
+Cezary Jablonski
+
+### ☄️ What's next?
+
+Airdrop marketplace will be in beta since there’s a high demand for this, We already have 5 thousand people waiting for this product subscribed to our newsletter specifically for this but for now it will only be accessible to our early adopters and early users which is around 3 thousand users. The plan is to launch this with Morph mainnet and go live with a big campaign.
+
+### 🔩 Project Structure
+
+- [Web Frontend](https://airdrop.etherway.io/dashboard)
+
+- [Morph Staking Contracts](https://github.com/CJskii/Airdrop-Marketplace/tree/main/contracts)
+
+
+🚫 License
+
+This Application uses MIT LICENSE
